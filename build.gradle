@@ -20,12 +20,14 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.12'
+	testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
 	testImplementation 'io.projectreactor:reactor-test'
+
 }
 
 test {

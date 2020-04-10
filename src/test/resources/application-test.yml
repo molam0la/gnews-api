@@ -1,0 +1,6 @@
+spring:
+ profiles: test
+gnews:
+ baseurl: "testBaseUrl"
+ apikey: "testApikey"
+ keyword: "testKeyword"

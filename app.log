@@ -1,7 +1,0 @@
-2020-04-03 13:00:15,614 INFO com.molam0la.dev.newsapi.NewsApiApplication [main] Starting NewsApiApplication on Sandras-MBP-2.lan with PID 98707 (/Users/sandra/Documents/Dev/news-api/build/classes/java/main started by sandra in /Users/sandra/Documents/Dev/news-api)
-2020-04-03 13:00:15,623 INFO com.molam0la.dev.newsapi.NewsApiApplication [main] No active profile set, falling back to default profiles: default
-2020-04-03 13:00:17,810 INFO com.molam0la.dev.newsapi.NewsApiApplication [main] Started NewsApiApplication in 2.746 seconds (JVM running for 3.218)
-2020-04-03 13:01:18,041 INFO com.molam0la.dev.newsapi.NewsApiApplication [main] Starting NewsApiApplication on Sandras-MBP-2.lan with PID 98709 (/Users/sandra/Documents/Dev/news-api/build/classes/java/main started by sandra in /Users/sandra/Documents/Dev/news-api)
-2020-04-03 13:01:18,045 INFO com.molam0la.dev.newsapi.NewsApiApplication [main] No active profile set, falling back to default profiles: default
-2020-04-03 13:01:19,986 INFO com.molam0la.dev.newsapi.NewsApiApplication [main] Started NewsApiApplication in 2.476 seconds (JVM running for 2.875)
-2020-04-03 13:01:19,989 ERROR com.molam0la.dev.newsapi.NewsApiApplication [main] Fake error
