@@ -26,7 +26,7 @@ public class Controller {
 
     @RequestMapping("/gnews")
     public Mono<ArticleInput> getGNews() {
-        return articleService.createArticle();
+        return articleService.retrieveAllArticles();
     }
 
     @GetMapping("/hi")

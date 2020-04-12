@@ -1,10 +1,17 @@
 package com.molam0la.dev.newsapi;
 
+import com.molam0la.dev.newsapi.ArticleProperties.Article;
 import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Service
@@ -13,15 +20,31 @@ public class ArticleService {
 
     private GNews gNews;
 
+    private static final Logger log = LoggerFactory.getLogger(ArticleService.class);
+
     @Autowired
     public ArticleService(GNews gNews) {
         this.gNews = gNews;
     }
 
-    public Mono<ArticleInput> createArticle() {
+    public Mono<ArticleInput> retrieveAllArticles() {
         return gNews.createWebClient()
                 .get()
                 .retrieve()
                 .bodyToMono(ArticleInput.class);
     }
+
+    public Mono<List<Article>> createListOfArticles() {
+        return retrieveAllArticles().map(ArticleInput::getArticles);
+    }
+
+    public Mono<Stream<Article>> showNumberOfArticles(int count) {
+        return createListOfArticles().map(articles -> articles.stream().limit(count));
+    }
+
+    public Mono<List<String>> createListOfTitles() {
+        return createListOfArticles()
+                .map(articles -> articles.stream().map(Article::getTitle).collect(Collectors.toList()));
+    }
+
 }

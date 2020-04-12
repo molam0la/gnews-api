@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.test.StepVerifier;
 
 import java.io.IOException;
 
@@ -20,6 +21,7 @@ class GNewsTest {
 
     private static GNews gNews;
     private static MockWebServer mockWebServer;
+    private static ArticleService articleService;
 
     @Mock
     private ConfigProps configProps;
@@ -34,6 +36,7 @@ class GNewsTest {
     void initialise() {
         String baseUrl = mockWebServer.url("/").toString();
         gNews = new GNews(configProps);
+        articleService = new ArticleService(gNews);
 
         given(configProps.getBaseUrl()).willReturn(baseUrl);
     }
@@ -44,14 +47,14 @@ class GNewsTest {
         assertThat(gNews.createWebClient().equals(mockWebServer));
     }
 
-    //Add exceptions to Gnews
+    //TODO add expection to GNews - this is not working
     @Test
     void testThrowingTooManyRequestsException() {
         MockResponse mockResponse = new MockResponse();
-        mockResponse.setResponseCode(429);
+        mockResponse.setResponseCode(500);
 
-        given(gNews.createWebClient()).willThrow(IOException.class);
-
+        StepVerifier.create(articleService.retrieveAllArticles())
+                .expectError(IOException.class);
     }
 
     @AfterAll

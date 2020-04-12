@@ -1,6 +1,5 @@
 package com.molam0la.dev.newsapi;
 
-import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -16,7 +15,9 @@ import reactor.test.StepVerifier;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +28,6 @@ class ArticleServiceTest {
     private static MockWebServer mockWebServer;
     private static MockResponse mockResponse;
     private String MOCK_ARTICLE;
-    private Mono<ArticleInput> MOCK_ARTICLE_INPUT;
 
     @Mock
     ConfigProps configProps;
@@ -54,19 +54,24 @@ class ArticleServiceTest {
         //set mockresponse
         mockResponse = new MockResponse();
         mockResponse.addHeader("Content-Type", "application/json; charset=utf-8");
+        mockResponse.setBody(MOCK_ARTICLE);
+        mockWebServer.enqueue(mockResponse);
     }
 
     @Test
     void testGettingResponseFromWebClientWithCorrectArticleCount() {
-        mockResponse.setResponseCode(200);
-        mockResponse.setBody(MOCK_ARTICLE);
-        mockWebServer.enqueue(mockResponse);
 
-        MOCK_ARTICLE_INPUT = articleService.createArticle();
-
-        StepVerifier.create(MOCK_ARTICLE_INPUT)
+        StepVerifier.create(articleService.retrieveAllArticles())
                 .expectNextMatches(articleInput -> articleInput.getArticleCount() == 10)
                 .verifyComplete();
+    }
+
+    @Test
+    void testReturningFirstTitleFromTheListOfTitles() {
+        Mono<List<String>> mockTitlesList = articleService.createListOfTitles();
+
+        assertThat(mockTitlesList
+                .block().get(0).equals("Italy’s Slow Progress in Fighting Coronavirus Is a Warning to West"));
 
     }
 

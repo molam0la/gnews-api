@@ -28,4 +28,28 @@ public class Article {
         this.publishedAt = publishedAt;
         this.source = source;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public String getPublishedAt() {
+        return publishedAt;
+    }
+
+    public List<String> getSource() {
+        return source;
+    }
 }
