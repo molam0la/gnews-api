@@ -1,1 +1,1 @@
-# gnews-api
+# news-api
