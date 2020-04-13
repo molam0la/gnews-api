@@ -31,7 +31,7 @@ public class Controller {
 
     @GetMapping("/hi")
     public String sayHi() {
-        return "HIIII";
+        return "HULLO";
     }
 
 }
