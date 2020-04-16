@@ -48,7 +48,7 @@ class ArticleServiceTest {
         given(configProps.getBaseUrl()).willReturn(baseUrl);
 
         //set mockarticle body
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("/Users/sandra/Documents/Dev/news-api/src/test/resources/articleMock.json"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("src/test/resources/articleMock.json"));
         MOCK_ARTICLE = bufferedReader.readLine();
 
         //set mockresponse
