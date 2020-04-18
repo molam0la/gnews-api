@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @org.springframework.web.bind.annotation.RestController
-//@org.springframework.stereotype.Controller
 public class RestController {
 
     @Autowired

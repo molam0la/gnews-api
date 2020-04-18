@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gnews</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<table id="allTitles" class="table table-striped">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Published</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="result" th:each="article: ${articles}">
+        <td th:text="${article.title}"></td>
+        <td th:text="${article.publishedAt}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
