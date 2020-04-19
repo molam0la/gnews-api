@@ -4,3 +4,5 @@ gnews:
  baseurl: "https://gnews.io/"
  apikey: '${GNEWS_APIKEY}'
  keyword: "technology"
+
+management.endpoints.web.exposure.include: 'info, health, metrics'
