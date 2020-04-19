@@ -2,5 +2,5 @@ spring:
  profiles: dev
 gnews:
  baseurl: "https://gnews.io/"
- apikey: "e7e97729496805263f48e6cd347f39cc"
+ apikey: '${GNEWS_APIKEY}'
  keyword: "technology"
