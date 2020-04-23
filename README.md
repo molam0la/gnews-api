@@ -1,1 +1,3 @@
-# news-api
+# gnews-api
+
+Using https://gnews.io/
