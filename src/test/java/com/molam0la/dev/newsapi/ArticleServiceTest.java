@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError;
+import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound;
+import org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -55,11 +58,13 @@ class ArticleServiceTest {
         mockResponse = new MockResponse();
         mockResponse.addHeader("Content-Type", "application/json; charset=utf-8");
         mockResponse.setBody(MOCK_ARTICLE);
-        mockWebServer.enqueue(mockResponse);
+
     }
 
     @Test
-    void testGettingResponseFromWebClientWithCorrectArticleCount() {
+    void retrieveAllArticles_returnsCorrectArticleCount() {
+        mockResponse.setResponseCode(200);
+        mockWebServer.enqueue(mockResponse);
 
         StepVerifier.create(articleService.retrieveAllArticles())
                 .expectNextMatches(articleInput -> articleInput.getArticleCount() == 10)
@@ -67,11 +72,41 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testReturningFirstTitleFromTheListOfTitles() {
+    void createListOfTitles_returnsFirstTitle() {
+        mockResponse.setResponseCode(200);
+        mockWebServer.enqueue(mockResponse);
+
         Mono<List<String>> mockTitlesList = articleService.createListOfTitles();
 
         assertThat(mockTitlesList
                 .block().get(0).equals("Italy’s Slow Progress in Fighting Coronavirus Is a Warning to West"));
+    }
+
+    @Test
+    void retrieveAllArticles_returns4xxError() {
+        mockResponse.setResponseCode(404);
+        mockWebServer.enqueue(mockResponse);
+
+        StepVerifier.create(articleService.createListOfArticles())
+                .expectError(NotFound.class).verify();
+    }
+
+    @Test
+    void retrieveAllArticles_returns5xxError() {
+        mockResponse.setResponseCode(500);
+        mockWebServer.enqueue(mockResponse);
+
+        StepVerifier.create(articleService.retrieveAllArticles())
+                .expectError(InternalServerError.class).verify();
+    }
+
+    @Test
+    void retrieveAllArticles_throwsTooManyRequestsException() {
+        mockResponse.setResponseCode(429);
+        mockWebServer.enqueue(mockResponse);
+
+        StepVerifier.create(articleService.retrieveAllArticles())
+                .expectError(TooManyRequests.class).verify();
 
     }
 

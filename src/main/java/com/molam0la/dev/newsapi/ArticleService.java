@@ -31,7 +31,13 @@ public class ArticleService {
         return gNews.createWebClient()
                 .get()
                 .retrieve()
-                .bodyToMono(ArticleInput.class);
+                .bodyToMono(ArticleInput.class)
+                .doOnError(error -> log.error(error.getMessage())).onErrorResume(error -> {
+                    if (error.getMessage().contains("429")) {
+                        log.error("Gnews request limit has been reached today.");
+                    }
+                    return Mono.error(error);
+                });
     }
 
     public Mono<List<Article>> createListOfArticles() {
