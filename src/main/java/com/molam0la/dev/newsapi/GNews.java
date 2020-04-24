@@ -18,7 +18,7 @@ public class GNews {
 
     public WebClient createWebClient() {
         return WebClient.builder()
-                .baseUrl(configProps.getBaseUrl() + "/api/v3/topics/" + configProps.getKeyword() + "?token=" + configProps.getApikey())
+                .baseUrl(configProps.getBaseUrl() + "/api/v3/topics/" + configProps.getTopic() + "?token=" + configProps.getApikey())
                 .build();
     }
 

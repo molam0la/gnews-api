@@ -23,5 +23,5 @@ class ConfigPropsTest {
     void getApikey() { assertEquals("testApikey", configProps.getApikey()); }
 
     @Test
-    void getKeyword() { assertEquals("testKeyword", configProps.getKeyword()); }
+    void getTopic() { assertEquals("testTopic", configProps.getTopic()); }
 }

@@ -37,8 +37,8 @@ public class RestController {
     }
 
     @RequestMapping(method = POST, value = "/gnews")
-    public Mono<ArticleInput> getGnewsWithKeyword(@RequestBody String keyword) {
-        configProps.setKeyword(keyword);
+    public Mono<ArticleInput> getGnewsWithTopic(@RequestBody String topic) {
+        configProps.setTopic(topic);
         return articleService.retrieveAllArticles();
     }
 

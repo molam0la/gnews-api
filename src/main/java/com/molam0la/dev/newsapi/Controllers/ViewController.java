@@ -17,12 +17,10 @@ public class ViewController {
     @Autowired
     private ArticleService articleService;
 
-
-
-    @GetMapping("/keyword")
-    public String getKeyword(@RequestParam(name="keyword", required=false, defaultValue="technology") String keyword, Model model) {
-        model.addAttribute("keyword", keyword);
-        return "keyword";
+    @GetMapping("/topic")
+    public String getTopic(@RequestParam(name="topic", required=false, defaultValue="technology") String topic, Model model) {
+        model.addAttribute("topic", topic);
+        return "topic";
     }
 
     @GetMapping("/article")

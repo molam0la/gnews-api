@@ -3,4 +3,4 @@ spring:
 gnews:
  baseurl: "testBaseUrl"
  apikey: "testApikey"
- keyword: "testKeyword"
+ topic: "testTopic"

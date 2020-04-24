@@ -11,13 +11,13 @@ public class ConfigProps {
 
     private String baseUrl;
     private String apikey;
-    private String keyword;
+    private String topic;
 
     public String getBaseUrl() { return baseUrl; }
 
     public String getApikey() { return apikey; }
 
-    public String getKeyword() { return keyword; }
+    public String getTopic() { return topic; }
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -27,8 +27,8 @@ public class ConfigProps {
         this.apikey = apikey;
     }
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
 }
