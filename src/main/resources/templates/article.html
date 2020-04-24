@@ -10,7 +10,9 @@
 <body>
 
 <div class="container">
-    <h2>Articles</h2>
+    <h2 th:text="'Articles for topic: ' + ${topic}"></h2>
+    <!--    <p th:text="'Hello, your topic is ' + ${topic} + '!'"></p>-->
+
     <table id="allTitles" class="table table-hover">
         <thead>
         <tr>
@@ -29,8 +31,16 @@
         </tr>
         </tbody>
     </table>
+    <div class="form-group">
+        <label for="topicDropDown">Select topic</label>
+        <select class="form-control" id="topicDropDown">
+            <option>technology</option>
+            <option>world</option>
+            <option>nation</option>
+            <option>science</option>
+            <option>health</option>
+        </select>
+    </div>
 </div>
-</table>
-
 </body>
 </html>

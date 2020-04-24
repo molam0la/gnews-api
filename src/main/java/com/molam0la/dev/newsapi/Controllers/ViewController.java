@@ -23,9 +23,10 @@ public class ViewController {
         return "topic";
     }
 
-    @GetMapping("/article")
+    @GetMapping("/article/")
     public String getArticle(Model model) {
         model.addAttribute("articles", articleService.createListOfArticles());
+        model.addAttribute("topic", configProps.getTopic());
         return "article";
     }
 
