@@ -1,5 +1,6 @@
 package com.molam0la.dev.newsapi;
 
+import com.molam0la.dev.newsapi.config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

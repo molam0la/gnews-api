@@ -1,4 +1,4 @@
-package com.molam0la.dev.newsapi;
+package com.molam0la.dev.newsapi.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

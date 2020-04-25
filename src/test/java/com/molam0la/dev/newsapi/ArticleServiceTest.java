@@ -1,5 +1,6 @@
 package com.molam0la.dev.newsapi;
 
+import com.molam0la.dev.newsapi.config.ConfigProps;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;

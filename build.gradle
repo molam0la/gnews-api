@@ -21,6 +21,7 @@ dependencies {
 	implementation 'org.springframework:spring-webmvc:5.2.5.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-autoconfigure:2.2.6.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	compileOnly 'org.projectlombok:lombok:1.18.12'
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 

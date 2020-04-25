@@ -1,7 +1,7 @@
 package com.molam0la.dev.newsapi.Controllers;
 
 import com.molam0la.dev.newsapi.ArticleService;
-import com.molam0la.dev.newsapi.ConfigProps;
+import com.molam0la.dev.newsapi.config.ConfigProps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

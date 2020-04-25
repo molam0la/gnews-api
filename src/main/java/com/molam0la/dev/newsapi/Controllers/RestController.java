@@ -2,7 +2,7 @@ package com.molam0la.dev.newsapi.Controllers;
 
 import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
 import com.molam0la.dev.newsapi.ArticleService;
-import com.molam0la.dev.newsapi.ConfigProps;
+import com.molam0la.dev.newsapi.config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
