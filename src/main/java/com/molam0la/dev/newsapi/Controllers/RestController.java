@@ -6,7 +6,6 @@ import com.molam0la.dev.newsapi.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
@@ -39,12 +38,6 @@ public class RestController {
 
     @RequestMapping(method = POST, value = "/article")
     public Mono<ArticleInput> getGnewsWithTopic(@RequestBody String topic) {
-        configProps.setTopic(topic);
-        return articleService.retrieveAllArticles();
-    }
-
-    @RequestMapping("/article/{topic}")
-    public Mono<ArticleInput> getTopicFromPath(@PathVariable String topic) {
         configProps.setTopic(topic);
         return articleService.retrieveAllArticles();
     }

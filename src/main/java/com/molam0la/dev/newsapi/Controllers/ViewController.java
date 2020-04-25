@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -23,11 +24,21 @@ public class ViewController {
         return "topic";
     }
 
-    @GetMapping("/article/")
+    @GetMapping("/article")
     public String getArticle(Model model) {
         model.addAttribute("articles", articleService.createListOfArticles());
         model.addAttribute("topic", configProps.getTopic());
         return "article";
     }
+
+    @GetMapping("/article/{topic}")
+    public String getArticleWithTopic(@PathVariable ("topic") String topic, Model model) {
+        configProps.setTopic(topic);
+        model.addAttribute("articles", articleService.createListOfArticles());
+        model.addAttribute("topic", configProps.getTopic());
+        return "article";
+    }
+
+
 
 }
