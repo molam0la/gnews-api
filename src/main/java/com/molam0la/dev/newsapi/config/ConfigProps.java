@@ -12,12 +12,15 @@ public class ConfigProps {
     private String baseUrl;
     private String apikey;
     private String topic;
+    private String keyword;
 
     public String getBaseUrl() { return baseUrl; }
 
     public String getApikey() { return apikey; }
 
     public String getTopic() { return topic; }
+
+    public String getKeyword() { return keyword; }
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -31,4 +34,5 @@ public class ConfigProps {
         this.topic = topic;
     }
 
+    public void setKeyword(String keyword) { this.keyword = keyword; }
 }

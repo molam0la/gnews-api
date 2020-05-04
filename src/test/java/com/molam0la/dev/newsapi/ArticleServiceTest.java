@@ -10,31 +10,32 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError;
 import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound;
 import org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+@SpringBootTest(classes = ConfigProps.class)
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceTest {
 
-    private GNews gNews;
     private ArticleService articleService;
     private static MockWebServer mockWebServer;
     private static MockResponse mockResponse;
-    private String MOCK_ARTICLE;
+    private String ARTICLE_STUB;
 
     @Mock
-    ConfigProps configProps;
+    GNews gNews;
+
+    @Mock
+    private ConfigProps configProps;
 
     @BeforeAll
     static void initialiseWebServer() throws IOException {
@@ -44,69 +45,70 @@ class ArticleServiceTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        gNews = new GNews(configProps);
-        articleService = new ArticleService(gNews);
 
-        //set webclient call
+        //set webclient
         String baseUrl = mockWebServer.url("/").toString();
         given(configProps.getBaseUrl()).willReturn(baseUrl);
 
-        //set mockarticle body
+        gNews = new GNews(configProps);
+        articleService = new ArticleService(gNews, configProps);
+
+        //set stub article body
         BufferedReader bufferedReader = new BufferedReader(new FileReader("src/test/resources/articleMock.json"));
-        MOCK_ARTICLE = bufferedReader.readLine();
+        ARTICLE_STUB = bufferedReader.readLine();
 
         //set mockresponse
         mockResponse = new MockResponse();
         mockResponse.addHeader("Content-Type", "application/json; charset=utf-8");
-        mockResponse.setBody(MOCK_ARTICLE);
+        mockResponse.setBody(ARTICLE_STUB);
 
     }
 
     @Test
-    void retrieveAllArticles_returnsCorrectArticleCount() {
+    void getArticlesByTopic_returnsCorrectArticleCount() {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.retrieveAllArticles())
+        StepVerifier.create(articleService.getArticlesByTopic())
                 .expectNextMatches(articleInput -> articleInput.getArticleCount() == 10)
                 .verifyComplete();
     }
 
     @Test
-    void createListOfTitles_returnsFirstTitle() {
+    void getArticlesBySearchWord_returnsCorrectTimestamp() {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        Mono<List<String>> mockTitlesList = articleService.createListOfTitles();
+        StepVerifier.create(articleService.getArticlesBySearchWord())
+                .expectNextMatches(articleInput -> articleInput.getTimestamp() == 1585339920)
+                .verifyComplete();
 
-        assertThat(mockTitlesList
-                .block().get(0).equals("Italy’s Slow Progress in Fighting Coronavirus Is a Warning to West"));
     }
 
     @Test
-    void retrieveAllArticles_returns4xxError() {
+    void getArticlesByTopic_returns4xxError() {
         mockResponse.setResponseCode(404);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.createListOfArticles())
+        StepVerifier.create(articleService.createListOfArticles(articleService.getArticlesByTopic()))
                 .expectError(NotFound.class).verify();
     }
 
     @Test
-    void retrieveAllArticles_returns5xxError() {
+    void getArticlesByTopic_returns5xxError() {
         mockResponse.setResponseCode(500);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.retrieveAllArticles())
+        StepVerifier.create(articleService.getArticlesByTopic())
                 .expectError(InternalServerError.class).verify();
     }
 
     @Test
-    void retrieveAllArticles_throwsTooManyRequestsException() {
+    void getArticlesByTopic_throwsTooManyRequestsException() {
         mockResponse.setResponseCode(429);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.retrieveAllArticles())
+        StepVerifier.create(articleService.getArticlesByTopic())
                 .expectError(TooManyRequests.class).verify();
 
     }

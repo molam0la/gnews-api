@@ -10,8 +10,7 @@
 <body>
 
 <div class="container">
-    <h2 th:text="'Articles for topic: ' + ${topic}"></h2>
-    <!--    <p th:text="'Hello, your topic is ' + ${topic} + '!'"></p>-->
+    <h2>Articles for</h2><h2 th:text="${topic} ? ${topic} : ${keyword}"/>
 
     <table id="allTitles" class="table table-hover">
         <thead>
@@ -31,16 +30,26 @@
         </tr>
         </tbody>
     </table>
-<!--    <div class="form-group">-->
-<!--        <label for="topicDropDown">Select topic</label>-->
-<!--        <select class="form-control" id="topicDropDown">-->
-<!--            <option>technology</option>-->
-<!--            <option>world</option>-->
-<!--            <option>nation</option>-->
-<!--            <option>science</option>-->
-<!--            <option>health</option>-->
-<!--        </select>-->
-<!--    </div>-->
+    <br>
+    <div>
+        <label>Search by topic</label>
+        <span><a href="/article/topic/world">world</a></span>
+        <span><a href="/article/topic/nation">nation</a></span>
+        <span><a href="/article/topic/technology">technology</a></span>
+        <span><a href="/article/topic/science">science</a></span>
+        <span><a href="/article/topic/health">health</a></span>
+        <span><a href="/article/topic/business">business</a></span>
+        <span><a href="/article/topic/entertainment">entertainment</a></span>
+        <span><a href="/article/topic/sports">sports</a></span>
+    </div>
+    <br>
+    <div>
+        <form action="/article/search">
+            <label for="keyword">Wild search</label>
+            <input type="text" id="keyword" name="keyword">
+            <input type="submit" value="search">
+        </form>
+    </div>
 </div>
 </body>
 </html>

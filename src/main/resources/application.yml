@@ -1,9 +1,11 @@
 spring:
  profiles: dev
+
 gnews:
- baseurl: "https://gnews.io/"
+ baseurl: "https://gnews.io/api/v3/"
  apikey: '${GNEWS_APIKEY}'
  topic: "technology"
+ keyword: "dog"
 
 management.endpoints.web.exposure.include: 'info, health, metrics, configprops, loggers'
 management.endpoint.health.show-details: 'always'

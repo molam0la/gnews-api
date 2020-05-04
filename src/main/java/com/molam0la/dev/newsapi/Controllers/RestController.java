@@ -33,13 +33,12 @@ public class RestController {
 
     @RequestMapping("/gnews")
     public Mono<ArticleInput> getGNews() {
-        return articleService.retrieveAllArticles();
+        return articleService.getArticlesByTopic();
     }
 
     @RequestMapping(method = POST, value = "/article")
     public Mono<ArticleInput> getGnewsWithTopic(@RequestBody String topic) {
         configProps.setTopic(topic);
-        return articleService.retrieveAllArticles();
+        return articleService.getArticlesByTopic();
     }
-
 }

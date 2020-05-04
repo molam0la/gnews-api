@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,25 +37,21 @@ class GNewsTest {
     void initialise() {
         String baseUrl = mockWebServer.url("/").toString();
         gNews = new GNews(configProps);
-        articleService = new ArticleService(gNews);
+        articleService = new ArticleService(gNews, configProps);
 
         given(configProps.getBaseUrl()).willReturn(baseUrl);
-    }
-
-    //TODO is this test valid?
-    @Test
-    void testWebClientReturnsANonEmptyResponse() {
-        assertThat(gNews.createWebClient().equals(mockWebServer));
     }
 
     //TODO add expection to GNews - this is not working
     @Test
     void testThrowingTooManyRequestsException() {
         MockResponse mockResponse = new MockResponse();
-        mockResponse.setResponseCode(500);
 
-        StepVerifier.create(articleService.retrieveAllArticles())
-                .expectError(IOException.class);
+            mockResponse.setResponseCode(500);
+            mockWebServer.enqueue(mockResponse);
+
+            StepVerifier.create(articleService.getArticlesByTopic())
+                    .expectError(WebClientResponseException.InternalServerError.class).verify();
     }
 
     @AfterAll

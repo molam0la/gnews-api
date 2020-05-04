@@ -4,3 +4,4 @@ gnews:
  baseurl: "testBaseUrl"
  apikey: "testApikey"
  topic: "testTopic"
+ search-word: "testSearch"

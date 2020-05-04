@@ -12,8 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 class ConfigPropsTest {
 
-    //TODO could this be parametarised?
-
     @Autowired
     private ConfigProps configProps;
 
