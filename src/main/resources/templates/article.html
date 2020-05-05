@@ -4,14 +4,16 @@
     <title>Gnews</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 
 <div class="container">
-    <h2>Articles for</h2><h2 th:text="${topic} ? ${topic} : ${keyword}"/>
-
+    <div th:with="display=${topic} ? ${topic} : ${keyword}">
+    <h2 th:text="|Articles for ${display}|"></h2>
+    </div>
     <table id="allTitles" class="table table-hover">
         <thead>
         <tr>
@@ -24,9 +26,7 @@
         <tr class="result" th:each="article: ${articles}">
             <td th:text="${article.title}"></td>
             <td th:text="${article.publishedAt}"></td>
-            <td>
-                <a th:href="${article.url}">Go to article</a>
-            </td>
+            <td><a th:href="${article.url}">Go to article</a></td>
         </tr>
         </tbody>
     </table>
