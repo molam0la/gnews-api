@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest(classes = ConfigProps.class)
@@ -82,6 +83,18 @@ class ArticleServiceTest {
         StepVerifier.create(articleService.getArticlesBySearchWord())
                 .expectNextMatches(articleInput -> articleInput.getTimestamp() == 1585339920)
                 .verifyComplete();
+
+    }
+
+    @Test
+    void getArticlesBySearchWord_returnsCorrectSourceName() {
+        mockResponse.setResponseCode(200);
+        mockWebServer.enqueue(mockResponse);
+
+        assertTrue(articleService
+                .createListOfArticles(articleService.getArticlesBySearchWord())
+                .block().get(0)
+                .getSource().getName().equals("The Wall Street Journal"));
 
     }
 

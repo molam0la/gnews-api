@@ -3,48 +3,49 @@
 <head>
     <title>Gnews</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>a:link {text-decoration: none; color: #303030;} a:visited {color: #303030;}</style>
 </head>
 <body>
-
+<br>
 <div class="container">
     <div th:with="display=${topic} ? ${topic} : ${keyword}">
     <h2 th:text="|${display} articles|"></h2>
     </div>
+    <br>
     <table id="allTitles" class="table table-hover">
         <thead>
         <tr>
             <th>Title</th>
+            <th>Source</th>
             <th>Published</th>
-            <th>Article url</th>
         </tr>
         </thead>
         <tbody>
         <tr class="result" th:each="article: ${articles}">
-            <td th:text="${article.title}"></td>
+            <td><a th:href="${article.url}"><p th:text="${article.title}"></p></a></td>
+            <td><a th:href="${article.source.url}"><p th:text="${article.source.name}"></p></a></td>
             <td th:text="${article.publishedAt}"></td>
-            <td><a th:href="${article.url}">Go to article</a></td>
         </tr>
         </tbody>
     </table>
     <br>
     <div>
         <label>Search by topic</label>
-        <span><a href="/article/topic/world">world</a></span>
-        <span><a href="/article/topic/nation">nation</a></span>
-        <span><a href="/article/topic/technology">technology</a></span>
-        <span><a href="/article/topic/science">science</a></span>
-        <span><a href="/article/topic/health">health</a></span>
-        <span><a href="/article/topic/business">business</a></span>
-        <span><a href="/article/topic/entertainment">entertainment</a></span>
-        <span><a href="/article/topic/sports">sports</a></span>
+        <span><a href="/topic/world">world</a></span>
+        <span><a href="/topic/nation">nation</a></span>
+        <span><a href="/topic/technology">technology</a></span>
+        <span><a href="/topic/science">science</a></span>
+        <span><a href="/topic/health">health</a></span>
+        <span><a href="/topic/business">business</a></span>
+        <span><a href="/topic/entertainment">entertainment</a></span>
+        <span><a href="/topic/sports">sports</a></span>
     </div>
     <br>
     <div>
-        <form action="/article/search">
+        <form action="/search">
             <label for="keyword">Wild search</label>
             <input type="text" id="keyword" name="keyword">
             <input type="submit" value="search">

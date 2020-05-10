@@ -18,38 +18,44 @@ public class ViewController {
         this.articleService = articleService;
     }
 
-    @GetMapping("/article/topic/{topic}")
-    public String getArticleWithTopicUrl(@PathVariable ("topic") String topic, Model model) {
+    @GetMapping("/")
+    public String getArticles(Model model) {
+        configProps.setKeyword("hello");
+        model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
+        model.addAttribute("keyword", configProps.getKeyword());
+        return "article";
+    }
+
+    @GetMapping("/topic/{topic}")
+    public String getArticlesWithTopicUrl(@PathVariable ("topic") String topic, Model model) {
         configProps.setTopic(topic);
         model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesByTopic()));
         model.addAttribute("topic", configProps.getTopic());
         return "article";
     }
 
-    @GetMapping("/article/topic")
-    public String getArticleWithTopicRequestParam(@RequestParam(name="topic", defaultValue = "technology") String topic, Model model) {
+    @GetMapping("/topic")
+    public String getArticlesWithTopicRequestParam(@RequestParam(name="topic", defaultValue = "technology") String topic, Model model) {
         configProps.setTopic(topic);
         model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesByTopic()));
         model.addAttribute("topic", configProps.getTopic());
         return "article";
     }
 
-    @GetMapping("/article/search/{keyword}")
-    public String getArticleWithKeywordUrl(@PathVariable("keyword") String keyword, Model model) {
+    @GetMapping("/search/{keyword}")
+    public String getArticlesWithKeywordUrl(@PathVariable("keyword") String keyword, Model model) {
         configProps.setKeyword(keyword);
         model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
         model.addAttribute("keyword", configProps.getKeyword());
         return "article";
     }
 
-    @GetMapping("/article/search")
-    public String getArticleWithKeywordRequestParam(@RequestParam(name="keyword", defaultValue = "dog") String keyword, Model model) {
+    @GetMapping("/search")
+    public String getArticlesWithKeywordRequestParam(@RequestParam(name="keyword", defaultValue = "dog") String keyword, Model model) {
         configProps.setKeyword(keyword);
         model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
         model.addAttribute("keyword", configProps.getKeyword());
         return "article";
     }
-
-
 
 }
