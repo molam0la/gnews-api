@@ -23,7 +23,6 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
-@SpringBootTest(classes = ConfigProps.class)
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceTest {
 
@@ -53,6 +52,7 @@ class ArticleServiceTest {
 
         gNews = new GNews(configProps);
         articleService = new ArticleService(gNews, configProps);
+        given(configProps.getLang()).willReturn("en");
 
         //set stub article body
         BufferedReader bufferedReader = new BufferedReader(new FileReader("src/test/resources/articleMock.json"));
@@ -124,19 +124,6 @@ class ArticleServiceTest {
         StepVerifier.create(articleService.getArticlesByTopic())
                 .expectError(TooManyRequests.class).verify();
 
-    }
-
-    @Test
-    void getArticlesByTopic_urlCanBeAmendedWithLanguage() {
-        mockResponse.setResponseCode(200);
-        mockWebServer.enqueue(mockResponse);
-
-        given(configProps.getTopic()).willReturn("topic");
-        given(configProps.getApikey()).willReturn("apikey");
-        given(configProps.getLang()).willReturn("pl");
-
-        StepVerifier.create(articleService.getArticlesByTopic())
-                .expectComplete();
     }
 
     @AfterAll
