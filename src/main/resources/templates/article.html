@@ -5,14 +5,25 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script> $(function(){ $('.selectpicker').selectpicker(); });></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <style>a:link {text-decoration: none; color: #303030;} a:visited {color: #303030;}</style>
 </head>
 <body>
 <br>
 <div class="container">
-    <div th:with="display=${topic} ? ${topic} : ${keyword}">
-    <h2 th:text="|${display} articles|"></h2>
+    <div>
+        <form action="" style="text-align: right;">
+            <select id="lang" name="lang" onchange="this.form.submit()">
+                <option value="Language"></option>
+                <option value="en">English</option>
+                <option value="pl">Polski</option>
+                <option value="de">Deutch</option>
+            </select>
+        </form>
+    </div>
+    <div th:with="displayTerm=${topic} ? ${topic} : ${keyword}">
+        <h2 th:text="|${displayTerm} news|"></h2>
     </div>
     <br>
     <table id="allTitles" class="table table-hover">

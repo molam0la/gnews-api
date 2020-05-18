@@ -6,6 +6,7 @@ gnews:
  apikey: '${GNEWS_APIKEY}'
  topic: "technology"
  keyword: "dog"
+ lang: "en"
 
 management.endpoints.web.exposure.include: 'info, health, metrics, configprops, loggers'
 management.endpoint.health.show-details: 'always'

@@ -65,11 +65,13 @@ public class ArticleService {
 
 
     private String createTopicUrl() {
-        return "topics/" + configProps.getTopic() + "?token=" + configProps.getApikey();
+        String url = "topics/" + configProps.getTopic() + "?token=" + configProps.getApikey();
+        return configProps.getLang().isEmpty() ? url : url + "&lang=" + configProps.getLang();
     }
 
     private String createSearchUrl() {
-        return "search?q=" + configProps.getKeyword() + "&token=" + configProps.getApikey();
+        String url = "search?q=" + configProps.getKeyword() + "&token=" + configProps.getApikey();
+        return configProps.getLang().isEmpty() ? url : url + "&lang=" + configProps.getLang();
     }
 
 

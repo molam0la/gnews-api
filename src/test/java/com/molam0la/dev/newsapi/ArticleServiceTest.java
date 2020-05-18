@@ -126,6 +126,19 @@ class ArticleServiceTest {
 
     }
 
+    @Test
+    void getArticlesByTopic_urlCanBeAmendedWithLanguage() {
+        mockResponse.setResponseCode(200);
+        mockWebServer.enqueue(mockResponse);
+
+        given(configProps.getTopic()).willReturn("topic");
+        given(configProps.getApikey()).willReturn("apikey");
+        given(configProps.getLang()).willReturn("pl");
+
+        StepVerifier.create(articleService.getArticlesByTopic())
+                .expectComplete();
+    }
+
     @AfterAll
     static void tearDown() throws IOException {
         mockWebServer.shutdown();

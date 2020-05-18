@@ -2,16 +2,23 @@ package com.molam0la.dev.newsapi.Controllers;
 
 import com.molam0la.dev.newsapi.ArticleService;
 import com.molam0la.dev.newsapi.config.ConfigProps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.swing.text.View;
+import java.util.Optional;
+
 @Controller
 public class ViewController {
     private ConfigProps configProps;
     private ArticleService articleService;
+
+    private static final Logger log = LoggerFactory.getLogger(ViewController.class);
 
     public ViewController(ConfigProps configProps, ArticleService articleService) {
         this.configProps = configProps;
@@ -19,42 +26,47 @@ public class ViewController {
     }
 
     @GetMapping("/")
-    public String getArticles(Model model) {
+    public String getArticles(@RequestParam(name="lang", required = false) String lang, Model model) {
+
+        lang = (lang == null) ? configProps.getLang() : lang;
+
         configProps.setKeyword("hello");
+        configProps.setLang(lang);
+
         model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
         model.addAttribute("keyword", configProps.getKeyword());
+        model.addAttribute("lang", configProps.getLang());
         return "article";
     }
 
     @GetMapping("/topic/{topic}")
-    public String getArticlesWithTopicUrl(@PathVariable ("topic") String topic, Model model) {
+    public String getArticlesWithTopicUrl(@PathVariable ("topic") String topic,
+                                          @RequestParam(name="lang", required = false) String lang, Model model) {
+
+        lang = (lang == null) ? configProps.getLang() : lang;
+
         configProps.setTopic(topic);
+        configProps.setLang(lang);
+
         model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesByTopic()));
         model.addAttribute("topic", configProps.getTopic());
-        return "article";
-    }
-
-    @GetMapping("/topic")
-    public String getArticlesWithTopicRequestParam(@RequestParam(name="topic", defaultValue = "technology") String topic, Model model) {
-        configProps.setTopic(topic);
-        model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesByTopic()));
-        model.addAttribute("topic", configProps.getTopic());
-        return "article";
-    }
-
-    @GetMapping("/search/{keyword}")
-    public String getArticlesWithKeywordUrl(@PathVariable("keyword") String keyword, Model model) {
-        configProps.setKeyword(keyword);
-        model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
-        model.addAttribute("keyword", configProps.getKeyword());
+        model.addAttribute("lang", configProps.getLang());
         return "article";
     }
 
     @GetMapping("/search")
-    public String getArticlesWithKeywordRequestParam(@RequestParam(name="keyword", defaultValue = "dog") String keyword, Model model) {
+    public String getArticlesWithKeywordRequestParam(@RequestParam(name="keyword", required = false) String keyword,
+                                                     @RequestParam(name="lang", required = false) String lang, Model model) {
+
+        keyword = (keyword == null) ? configProps.getKeyword() : keyword;
+        lang = (lang == null) ? configProps.getLang() : lang;
+
         configProps.setKeyword(keyword);
+        configProps.setLang(lang);
+
         model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
         model.addAttribute("keyword", configProps.getKeyword());
+        model.addAttribute("lang", configProps.getLang());
         return "article";
     }
 

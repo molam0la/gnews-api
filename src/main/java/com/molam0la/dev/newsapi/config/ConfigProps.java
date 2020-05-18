@@ -13,6 +13,8 @@ public class ConfigProps {
     private String apikey;
     private String topic;
     private String keyword;
+    private String lang;
+
 
     public String getBaseUrl() { return baseUrl; }
 
@@ -21,6 +23,8 @@ public class ConfigProps {
     public String getTopic() { return topic; }
 
     public String getKeyword() { return keyword; }
+
+    public String getLang() { return lang; }
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -35,4 +39,6 @@ public class ConfigProps {
     }
 
     public void setKeyword(String keyword) { this.keyword = keyword; }
+
+    public void setLang(String lang) { this.lang = lang; }
 }
