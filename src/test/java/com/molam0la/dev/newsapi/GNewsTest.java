@@ -40,6 +40,8 @@ class GNewsTest {
         articleService = new ArticleService(gNews, configProps);
 
         given(configProps.getBaseUrl()).willReturn(baseUrl);
+        given(configProps.getLang()).willReturn("en");
+
     }
 
     //TODO add expection to GNews - this is not working
