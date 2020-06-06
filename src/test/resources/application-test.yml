@@ -1,8 +1,14 @@
 spring:
  profiles: test
+
 gnews:
  baseurl: "testBaseUrl"
  apikey: "testApikey"
  topic: "testTopic"
  keyword: "testKeyword"
  lang: "en"
+
+cassandra:
+ contactpoints: 127.0.0.1
+ port: 9142
+ keyspaceName: gnews_api
