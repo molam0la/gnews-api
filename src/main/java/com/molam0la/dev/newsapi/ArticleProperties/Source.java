@@ -16,7 +16,6 @@ public class Source {
         super();
     }
 
-
     public String getName() {
         return name;
     }

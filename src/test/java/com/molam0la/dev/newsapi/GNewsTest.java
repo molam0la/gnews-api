@@ -1,5 +1,6 @@
 package com.molam0la.dev.newsapi;
 
+import com.molam0la.dev.newsapi.Models.ArticleToModelMapper;
 import com.molam0la.dev.newsapi.config.ConfigProps;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -26,6 +27,8 @@ class GNewsTest {
 
     @Mock
     private ConfigProps configProps;
+    @Mock
+    private ArticleToModelMapper mapper;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -37,7 +40,7 @@ class GNewsTest {
     void initialise() {
         String baseUrl = mockWebServer.url("/").toString();
         gNews = new GNews(configProps);
-        articleService = new ArticleService(gNews, configProps);
+        articleService = new ArticleService(gNews, configProps, mapper);
 
         given(configProps.getBaseUrl()).willReturn(baseUrl);
         given(configProps.getLang()).willReturn("en");

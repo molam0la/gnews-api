@@ -3,12 +3,10 @@ package com.molam0la.dev.newsapi.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = CassandraConfig.class)
-@ActiveProfiles("test")
 class CassandraConfigTest {
 
     @Autowired
@@ -21,5 +19,5 @@ class CassandraConfigTest {
     void getContactPoints() { assertEquals("127.0.0.1", cassandraConfig.getContactPoints()); }
 
     @Test
-    void getPort() { assertEquals(9142, cassandraConfig.getPort()); }
+    void getPort() { assertEquals(9042, cassandraConfig.getPort()); }
 }

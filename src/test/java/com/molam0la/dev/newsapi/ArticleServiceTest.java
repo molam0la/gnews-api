@@ -1,5 +1,6 @@
 package com.molam0la.dev.newsapi;
 
+import com.molam0la.dev.newsapi.Models.ArticleToModelMapper;
 import com.molam0la.dev.newsapi.config.ConfigProps;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError;
 import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound;
 import org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests;
@@ -27,13 +27,13 @@ import static org.mockito.BDDMockito.given;
 class ArticleServiceTest {
 
     private ArticleService articleService;
+    private ArticleToModelMapper articleToModelMapper;
     private static MockWebServer mockWebServer;
     private static MockResponse mockResponse;
     private String ARTICLE_STUB;
 
     @Mock
-    GNews gNews;
-
+    private GNews gNews;
     @Mock
     private ConfigProps configProps;
 
@@ -51,7 +51,8 @@ class ArticleServiceTest {
         given(configProps.getBaseUrl()).willReturn(baseUrl);
 
         gNews = new GNews(configProps);
-        articleService = new ArticleService(gNews, configProps);
+        articleToModelMapper = new ArticleToModelMapper();
+        articleService = new ArticleService(gNews, configProps, articleToModelMapper);
         given(configProps.getLang()).willReturn("en");
 
         //set stub article body
@@ -71,7 +72,7 @@ class ArticleServiceTest {
         mockWebServer.enqueue(mockResponse);
 
         StepVerifier.create(articleService.getArticlesByTopic())
-                .expectNextMatches(articleInput -> articleInput.getArticleCount() == 10)
+                .expectNextMatches(articleInputModel -> articleInputModel.getArticleCount() == 10)
                 .verifyComplete();
     }
 
@@ -81,7 +82,7 @@ class ArticleServiceTest {
         mockWebServer.enqueue(mockResponse);
 
         StepVerifier.create(articleService.getArticlesBySearchWord())
-                .expectNextMatches(articleInput -> articleInput.getTimestamp() == 1585339920)
+                .expectNextMatches(articleInputModel -> articleInputModel.getTimestamp() == 1585339920)
                 .verifyComplete();
 
     }
@@ -93,9 +94,10 @@ class ArticleServiceTest {
 
         assertTrue(articleService
                 .createListOfArticles(articleService.getArticlesBySearchWord())
-                .block().get(0)
-                .getSource().getName().equals("The Wall Street Journal"));
-
+                .block()
+                .get(0)
+                .getSourceName()
+                .equals("The Wall Street Journal"));
     }
 
     @Test

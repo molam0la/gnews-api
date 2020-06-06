@@ -38,7 +38,7 @@
         <tbody>
         <tr class="result" th:each="article: ${articles}">
             <td><a th:href="${article.url}"><p th:text="${article.title}"></p></a></td>
-            <td><a th:href="${article.source.url}"><p th:text="${article.source.name}"></p></a></td>
+            <td><a th:href="${article.sourceUrl}"><p th:text="${article.sourceName}"></p></a></td>
             <td th:text="${article.publishedAt}"></td>
         </tr>
         </tbody>

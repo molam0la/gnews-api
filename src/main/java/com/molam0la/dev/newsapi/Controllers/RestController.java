@@ -1,7 +1,7 @@
 package com.molam0la.dev.newsapi.Controllers;
 
-import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
 import com.molam0la.dev.newsapi.ArticleService;
+import com.molam0la.dev.newsapi.Models.ArticleInputModel;
 import com.molam0la.dev.newsapi.config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +32,12 @@ public class RestController {
     private static final Logger log = LoggerFactory.getLogger(RestController.class);
 
     @RequestMapping("/gnews")
-    public Mono<ArticleInput> getGNews() {
+    public Mono<ArticleInputModel> getGNews() {
         return articleService.getArticlesByTopic();
     }
 
     @RequestMapping(method = POST, value = "/article")
-    public Mono<ArticleInput> getGnewsWithTopic(@RequestBody String topic) {
+    public Mono<ArticleInputModel> getGnewsWithTopic(@RequestBody String topic) {
         configProps.setTopic(topic);
         return articleService.getArticlesByTopic();
     }
