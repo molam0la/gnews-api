@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-@Ignore
 class CassandraConnectorTest {
 
     private CassandraConnector client;
     private Session session;
 
+    @Ignore
     @Test
     void connect() throws IOException {
         client = new CassandraConnector();
