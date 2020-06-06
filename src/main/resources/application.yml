@@ -1,12 +1,29 @@
 spring:
- profiles: dev
+  profiles.active: dev
 
 gnews:
- baseurl: "https://gnews.io/api/v3/"
- apikey: '${GNEWS_APIKEY}'
- topic: "technology"
- keyword: "dog"
- lang: "en"
+  baseurl: "https://gnews.io/api/v3/"
+  apikey: '${GNEWS_APIKEY}'
+  topic: "technology"
+  keyword: "dog"
+  lang: "en"
 
-management.endpoints.web.exposure.include: 'info, health, metrics, configprops, loggers'
-management.endpoint.health.show-details: 'always'
+cassandra:
+  contactpoints: 127.0.0.1
+  port: 9042
+  keyspaceName: gnews_api
+
+management:
+  endpoints.web.exposure.include: 'info, health, metrics, configprops, loggers'
+  endpoint.health.show-details: 'always'
+
+logging:
+  level:
+    root: INFO
+    org.springframework: ERROR
+    io.netty: INFO
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
+
+server.error.whitelabel.enabled: false

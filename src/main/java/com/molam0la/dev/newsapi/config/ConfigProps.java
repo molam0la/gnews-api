@@ -15,7 +15,6 @@ public class ConfigProps {
     private String keyword;
     private String lang;
 
-
     public String getBaseUrl() { return baseUrl; }
 
     public String getApikey() { return apikey; }
