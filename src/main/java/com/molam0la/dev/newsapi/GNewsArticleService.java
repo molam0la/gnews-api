@@ -1,10 +1,10 @@
 package com.molam0la.dev.newsapi;
 
 import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
-import com.molam0la.dev.newsapi.Models.ArticleInputModel;
-import com.molam0la.dev.newsapi.Models.ArticleModel;
-import com.molam0la.dev.newsapi.Models.ArticleToModelMapper;
-import com.molam0la.dev.newsapi.config.ConfigProps;
+import com.molam0la.dev.newsapi.Articles.ClientArticleInput;
+import com.molam0la.dev.newsapi.Articles.ClientArticle;
+import com.molam0la.dev.newsapi.Mappers.GnewsArticleToClientArticleMapper;
+import com.molam0la.dev.newsapi.Config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,28 +13,28 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service
-public class ArticleService {
+public class GNewsArticleService {
 
     private GNews gNews;
 
     private ConfigProps configProps;
-    private ArticleToModelMapper articleToModelMapper;
+    private GnewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
 
-    private static final Logger log = LoggerFactory.getLogger(ArticleService.class);
+    private static final Logger log = LoggerFactory.getLogger(GNewsArticleService.class);
 
-    public ArticleService(GNews gNews, ConfigProps configProps, ArticleToModelMapper articleToModelMapper) {
+    public GNewsArticleService(GNews gNews, ConfigProps configProps, GnewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper) {
         this.gNews = gNews;
         this.configProps = configProps;
-        this.articleToModelMapper = articleToModelMapper;
+        this.gnewsArticleToClientArticleMapper = gnewsArticleToClientArticleMapper;
     }
 
-    public Mono<ArticleInputModel> getArticlesByTopic() {
+    public Mono<ClientArticleInput> getArticlesByTopic() {
         return gNews.createWebClient()
                 .get()
                 .uri(createTopicUrl())
                 .retrieve()
                 .bodyToMono(ArticleInput.class)
-                .map(articleToModelMapper)
+                .map(gnewsArticleToClientArticleMapper)
                 .doOnError(error -> log.error(error.getMessage())).onErrorResume(error -> {
                     if (error.getMessage().contains("429")) {
                         log.error("Gnews request limit has been reached today.");
@@ -43,13 +43,13 @@ public class ArticleService {
                 });
     }
 
-    public Mono<ArticleInputModel> getArticlesBySearchWord() {
+    public Mono<ClientArticleInput> getArticlesBySearchWord() {
         return gNews.createWebClient()
                 .get()
                 .uri(createSearchUrl())
                 .retrieve()
                 .bodyToMono(ArticleInput.class)
-                .map(articleToModelMapper)
+                .map(gnewsArticleToClientArticleMapper)
                 .doOnError(error -> log.error(error.getMessage())).onErrorResume(error -> {
                     if (error.getMessage().contains("429")) {
                         log.error("Gnews request limit has been reached today.");
@@ -58,8 +58,8 @@ public class ArticleService {
                 });
     }
 
-    public Mono<List<ArticleModel>> createListOfArticles(Mono<ArticleInputModel> articleInput) {
-        return articleInput.map(ArticleInputModel::getArticleModels);
+    public Mono<List<ClientArticle>> createListOfArticles(Mono<ClientArticleInput> articleInput) {
+        return articleInput.map(ClientArticleInput::getClientArticles);
     }
 
 

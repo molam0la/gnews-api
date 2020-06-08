@@ -1,6 +1,8 @@
-package com.molam0la.dev.newsapi.Models;
+package com.molam0la.dev.newsapi.Mappers;
 
 import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
+import com.molam0la.dev.newsapi.Articles.ClientArticle;
+import com.molam0la.dev.newsapi.Articles.ClientArticleInput;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -10,21 +12,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class ArticleToModelMapper implements Function<ArticleInput, ArticleInputModel> {
+public class GnewsArticleToClientArticleMapper implements Function<ArticleInput, ClientArticleInput> {
 
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 
     @Override
-    public ArticleInputModel apply(ArticleInput articleInput) {
+    public ClientArticleInput apply(ArticleInput articleInput) {
 
         int timestamp = articleInput.getTimestamp();
         int articleCount = articleInput.getArticleCount();
 
-        List<ArticleModel> articles =
+        List<ClientArticle> articles =
                 articleInput.getArticles()
                         .stream()
                         .map(article ->
-                                new ArticleModel(
+                                new ClientArticle(
                                         article.getTitle(),
                                         article.getDescription(),
                                         article.getUrl(),
@@ -36,7 +38,7 @@ public class ArticleToModelMapper implements Function<ArticleInput, ArticleInput
                         )
                         .collect(Collectors.toList());
 
-        return new ArticleInputModel(timestamp, articleCount, articles);
+        return new ClientArticleInput(timestamp, articleCount, articles);
     }
 
     private Instant convertTimestamp(String timestamp) {

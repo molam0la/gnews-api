@@ -1,7 +1,7 @@
 package com.molam0la.dev.newsapi.Controllers;
 
-import com.molam0la.dev.newsapi.ArticleService;
-import com.molam0la.dev.newsapi.config.ConfigProps;
+import com.molam0la.dev.newsapi.GNewsArticleService;
+import com.molam0la.dev.newsapi.Config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -10,19 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.swing.text.View;
-import java.util.Optional;
-
 @Controller
 public class ViewController {
     private ConfigProps configProps;
-    private ArticleService articleService;
+    private GNewsArticleService GNewsArticleService;
 
     private static final Logger log = LoggerFactory.getLogger(ViewController.class);
 
-    public ViewController(ConfigProps configProps, ArticleService articleService) {
+    public ViewController(ConfigProps configProps, GNewsArticleService GNewsArticleService) {
         this.configProps = configProps;
-        this.articleService = articleService;
+        this.GNewsArticleService = GNewsArticleService;
     }
 
     @GetMapping("/")
@@ -33,7 +30,7 @@ public class ViewController {
         configProps.setKeyword("hello");
         configProps.setLang(lang);
 
-        model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
+        model.addAttribute("articles", GNewsArticleService.createListOfArticles(GNewsArticleService.getArticlesBySearchWord()));
         model.addAttribute("keyword", configProps.getKeyword());
         model.addAttribute("lang", configProps.getLang());
         return "article";
@@ -48,7 +45,7 @@ public class ViewController {
         configProps.setTopic(topic);
         configProps.setLang(lang);
 
-        model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesByTopic()));
+        model.addAttribute("articles", GNewsArticleService.createListOfArticles(GNewsArticleService.getArticlesByTopic()));
         model.addAttribute("topic", configProps.getTopic());
         model.addAttribute("lang", configProps.getLang());
         return "article";
@@ -64,7 +61,7 @@ public class ViewController {
         configProps.setKeyword(keyword);
         configProps.setLang(lang);
 
-        model.addAttribute("articles", articleService.createListOfArticles(articleService.getArticlesBySearchWord()));
+        model.addAttribute("articles", GNewsArticleService.createListOfArticles(GNewsArticleService.getArticlesBySearchWord()));
         model.addAttribute("keyword", configProps.getKeyword());
         model.addAttribute("lang", configProps.getLang());
         return "article";

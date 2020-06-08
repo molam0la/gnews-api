@@ -1,7 +1,7 @@
 package com.molam0la.dev.newsapi;
 
-import com.molam0la.dev.newsapi.Models.ArticleToModelMapper;
-import com.molam0la.dev.newsapi.config.ConfigProps;
+import com.molam0la.dev.newsapi.Mappers.GnewsArticleToClientArticleMapper;
+import com.molam0la.dev.newsapi.Config.ConfigProps;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -23,12 +23,12 @@ class GNewsTest {
 
     private static GNews gNews;
     private static MockWebServer mockWebServer;
-    private static ArticleService articleService;
+    private static GNewsArticleService GNewsArticleService;
 
     @Mock
     private ConfigProps configProps;
     @Mock
-    private ArticleToModelMapper mapper;
+    private GnewsArticleToClientArticleMapper mapper;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -40,7 +40,7 @@ class GNewsTest {
     void initialise() {
         String baseUrl = mockWebServer.url("/").toString();
         gNews = new GNews(configProps);
-        articleService = new ArticleService(gNews, configProps, mapper);
+        GNewsArticleService = new GNewsArticleService(gNews, configProps, mapper);
 
         given(configProps.getBaseUrl()).willReturn(baseUrl);
         given(configProps.getLang()).willReturn("en");
@@ -55,7 +55,7 @@ class GNewsTest {
             mockResponse.setResponseCode(500);
             mockWebServer.enqueue(mockResponse);
 
-            StepVerifier.create(articleService.getArticlesByTopic())
+            StepVerifier.create(GNewsArticleService.getArticlesByTopic())
                     .expectError(WebClientResponseException.InternalServerError.class).verify();
     }
 

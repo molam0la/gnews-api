@@ -1,7 +1,7 @@
 package com.molam0la.dev.newsapi;
 
-import com.molam0la.dev.newsapi.Models.ArticleToModelMapper;
-import com.molam0la.dev.newsapi.config.ConfigProps;
+import com.molam0la.dev.newsapi.Mappers.GnewsArticleToClientArticleMapper;
+import com.molam0la.dev.newsapi.Config.ConfigProps;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class ArticleServiceTest {
+class GNewsArticleServiceTest {
 
-    private ArticleService articleService;
-    private ArticleToModelMapper articleToModelMapper;
+    private GNewsArticleService GNewsArticleService;
+    private GnewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
     private static MockWebServer mockWebServer;
     private static MockResponse mockResponse;
     private String ARTICLE_STUB;
@@ -51,8 +51,8 @@ class ArticleServiceTest {
         given(configProps.getBaseUrl()).willReturn(baseUrl);
 
         gNews = new GNews(configProps);
-        articleToModelMapper = new ArticleToModelMapper();
-        articleService = new ArticleService(gNews, configProps, articleToModelMapper);
+        gnewsArticleToClientArticleMapper = new GnewsArticleToClientArticleMapper();
+        GNewsArticleService = new GNewsArticleService(gNews, configProps, gnewsArticleToClientArticleMapper);
         given(configProps.getLang()).willReturn("en");
 
         //set stub article body
@@ -71,7 +71,7 @@ class ArticleServiceTest {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.getArticlesByTopic())
+        StepVerifier.create(GNewsArticleService.getArticlesByTopic())
                 .expectNextMatches(articleInputModel -> articleInputModel.getArticleCount() == 10)
                 .verifyComplete();
     }
@@ -81,7 +81,7 @@ class ArticleServiceTest {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.getArticlesBySearchWord())
+        StepVerifier.create(GNewsArticleService.getArticlesBySearchWord())
                 .expectNextMatches(articleInputModel -> articleInputModel.getTimestamp() == 1585339920)
                 .verifyComplete();
 
@@ -92,8 +92,8 @@ class ArticleServiceTest {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        assertTrue(articleService
-                .createListOfArticles(articleService.getArticlesBySearchWord())
+        assertTrue(GNewsArticleService
+                .createListOfArticles(GNewsArticleService.getArticlesBySearchWord())
                 .block()
                 .get(0)
                 .getSourceName()
@@ -105,7 +105,7 @@ class ArticleServiceTest {
         mockResponse.setResponseCode(404);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.createListOfArticles(articleService.getArticlesByTopic()))
+        StepVerifier.create(GNewsArticleService.createListOfArticles(GNewsArticleService.getArticlesByTopic()))
                 .expectError(NotFound.class).verify();
     }
 
@@ -114,7 +114,7 @@ class ArticleServiceTest {
         mockResponse.setResponseCode(500);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.getArticlesByTopic())
+        StepVerifier.create(GNewsArticleService.getArticlesByTopic())
                 .expectError(InternalServerError.class).verify();
     }
 
@@ -123,7 +123,7 @@ class ArticleServiceTest {
         mockResponse.setResponseCode(429);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(articleService.getArticlesByTopic())
+        StepVerifier.create(GNewsArticleService.getArticlesByTopic())
                 .expectError(TooManyRequests.class).verify();
 
     }

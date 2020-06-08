@@ -1,8 +1,8 @@
 package com.molam0la.dev.newsapi.Controllers;
 
-import com.molam0la.dev.newsapi.ArticleService;
-import com.molam0la.dev.newsapi.Models.ArticleInputModel;
-import com.molam0la.dev.newsapi.config.ConfigProps;
+import com.molam0la.dev.newsapi.GNewsArticleService;
+import com.molam0la.dev.newsapi.Articles.ClientArticleInput;
+import com.molam0la.dev.newsapi.Config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class RestController {
     private ConfigProps configProps;
 
     @Autowired
-    private ArticleService articleService;
+    private GNewsArticleService GNewsArticleService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -32,13 +32,13 @@ public class RestController {
     private static final Logger log = LoggerFactory.getLogger(RestController.class);
 
     @RequestMapping("/gnews")
-    public Mono<ArticleInputModel> getGNews() {
-        return articleService.getArticlesByTopic();
+    public Mono<ClientArticleInput> getGNews() {
+        return GNewsArticleService.getArticlesByTopic();
     }
 
     @RequestMapping(method = POST, value = "/article")
-    public Mono<ArticleInputModel> getGnewsWithTopic(@RequestBody String topic) {
+    public Mono<ClientArticleInput> getGnewsWithTopic(@RequestBody String topic) {
         configProps.setTopic(topic);
-        return articleService.getArticlesByTopic();
+        return GNewsArticleService.getArticlesByTopic();
     }
 }

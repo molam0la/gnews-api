@@ -1,4 +1,4 @@
-package com.molam0la.dev.newsapi.config;
+package com.molam0la.dev.newsapi.Cassandra;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -7,10 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
 import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
+import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties("cassandra")
+@EnableCassandraRepositories
 public class CassandraConfig extends AbstractCassandraConfiguration {
 
     private String keyspaceName;
