@@ -1,7 +1,7 @@
 package com.molam0la.dev.newsapi;
 
-import com.molam0la.dev.newsapi.Mappers.GnewsArticleToClientArticleMapper;
-import com.molam0la.dev.newsapi.Config.ConfigProps;
+import com.molam0la.dev.newsapi.mappers.GNewsArticleToClientArticleMapper;
+import com.molam0la.dev.newsapi.app_config.ConfigProps;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -27,7 +27,7 @@ import static org.mockito.BDDMockito.given;
 class GNewsArticleServiceTest {
 
     private GNewsArticleService GNewsArticleService;
-    private GnewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
+    private GNewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
     private static MockWebServer mockWebServer;
     private static MockResponse mockResponse;
     private String ARTICLE_STUB;
@@ -51,7 +51,7 @@ class GNewsArticleServiceTest {
         given(configProps.getBaseUrl()).willReturn(baseUrl);
 
         gNews = new GNews(configProps);
-        gnewsArticleToClientArticleMapper = new GnewsArticleToClientArticleMapper();
+        gnewsArticleToClientArticleMapper = new GNewsArticleToClientArticleMapper();
         GNewsArticleService = new GNewsArticleService(gNews, configProps, gnewsArticleToClientArticleMapper);
         given(configProps.getLang()).willReturn("en");
 
@@ -125,8 +125,9 @@ class GNewsArticleServiceTest {
 
         StepVerifier.create(GNewsArticleService.getArticlesByTopic())
                 .expectError(TooManyRequests.class).verify();
-
     }
+
+
 
     @AfterAll
     static void tearDown() throws IOException {

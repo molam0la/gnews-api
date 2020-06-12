@@ -1,10 +1,10 @@
 package com.molam0la.dev.newsapi;
 
-import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
-import com.molam0la.dev.newsapi.Articles.ClientArticleInput;
-import com.molam0la.dev.newsapi.Articles.ClientArticle;
-import com.molam0la.dev.newsapi.Mappers.GnewsArticleToClientArticleMapper;
-import com.molam0la.dev.newsapi.Config.ConfigProps;
+import com.molam0la.dev.newsapi.article_props.ArticleInput;
+import com.molam0la.dev.newsapi.articles.ClientArticleInput;
+import com.molam0la.dev.newsapi.articles.ClientArticle;
+import com.molam0la.dev.newsapi.mappers.GNewsArticleToClientArticleMapper;
+import com.molam0la.dev.newsapi.app_config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,13 +16,12 @@ import java.util.List;
 public class GNewsArticleService {
 
     private GNews gNews;
-
     private ConfigProps configProps;
-    private GnewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
+    private GNewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
 
     private static final Logger log = LoggerFactory.getLogger(GNewsArticleService.class);
 
-    public GNewsArticleService(GNews gNews, ConfigProps configProps, GnewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper) {
+    public GNewsArticleService(GNews gNews, ConfigProps configProps, GNewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper) {
         this.gNews = gNews;
         this.configProps = configProps;
         this.gnewsArticleToClientArticleMapper = gnewsArticleToClientArticleMapper;

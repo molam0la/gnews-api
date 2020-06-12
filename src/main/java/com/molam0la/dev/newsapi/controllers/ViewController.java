@@ -1,7 +1,7 @@
-package com.molam0la.dev.newsapi.Controllers;
+package com.molam0la.dev.newsapi.controllers;
 
 import com.molam0la.dev.newsapi.GNewsArticleService;
-import com.molam0la.dev.newsapi.Config.ConfigProps;
+import com.molam0la.dev.newsapi.app_config.ConfigProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

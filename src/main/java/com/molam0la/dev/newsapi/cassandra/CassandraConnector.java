@@ -1,4 +1,4 @@
-package com.molam0la.dev.newsapi.Cassandra;
+package com.molam0la.dev.newsapi.cassandra;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Metadata;

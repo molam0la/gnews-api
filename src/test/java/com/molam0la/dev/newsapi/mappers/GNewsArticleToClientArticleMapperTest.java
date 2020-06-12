@@ -1,10 +1,9 @@
-package com.molam0la.dev.newsapi;
+package com.molam0la.dev.newsapi.mappers;
 
-import com.molam0la.dev.newsapi.ArticleProperties.Article;
-import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
-import com.molam0la.dev.newsapi.ArticleProperties.Source;
-import com.molam0la.dev.newsapi.Articles.ClientArticleInput;
-import com.molam0la.dev.newsapi.Mappers.GnewsArticleToClientArticleMapper;
+import com.molam0la.dev.newsapi.article_props.Article;
+import com.molam0la.dev.newsapi.article_props.ArticleInput;
+import com.molam0la.dev.newsapi.article_props.Source;
+import com.molam0la.dev.newsapi.articles.ClientArticleInput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,9 +15,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-class GnewsArticleToClientArticleMapperTest {
+class GNewsArticleToClientArticleMapperTest {
 
-    private GnewsArticleToClientArticleMapper mapper;
+    private GNewsArticleToClientArticleMapper mapper;
     private ClientArticleInput clientArticleInput;
     private ArticleInput articleInput;
     private List<Article> articlesList;
@@ -26,7 +25,7 @@ class GnewsArticleToClientArticleMapperTest {
     @BeforeEach
     public void setUp() throws IOException {
 
-        mapper = new GnewsArticleToClientArticleMapper();
+        mapper = new GNewsArticleToClientArticleMapper();
 
         articlesList = new ArrayList<>();
         articlesList.add(new Article("title1", "description1", "url1", "image1", "2020-03-27 19:30:21 UTC", new Source("source1", "sourceUrl1")));
@@ -37,7 +36,7 @@ class GnewsArticleToClientArticleMapperTest {
     }
 
     @Test
-    public void applyReturnsArticleInputModel() {
+    public void applyReturnsAnInstanceOfArticleInputModel() {
         assertEquals(12345, clientArticleInput.getTimestamp());
         assertEquals(2, clientArticleInput.getArticleCount());
     }

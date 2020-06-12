@@ -9,7 +9,7 @@ gnews:
   lang: "en"
 
 cassandra:
-  contactpoints: 127.0.0.1
+  contactPoint: 127.0.0.1
   port: 9042
   keyspaceName: gnews_api
 

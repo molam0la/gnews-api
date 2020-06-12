@@ -1,7 +1,7 @@
-//package com.molam0la.dev.newsapi.Cassandra;
-//
-//import com.datastax.driver.core.Row;
-//import com.datastax.driver.core.Session;
+package com.molam0la.dev.newsapi.cassandra;
+
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 //import org.junit.Ignore;
 //import org.junit.jupiter.api.Test;
 //

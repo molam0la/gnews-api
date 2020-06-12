@@ -1,16 +1,31 @@
-package com.molam0la.dev.newsapi.Articles;
+package com.molam0la.dev.newsapi.cassandra.model;
+
+import org.springframework.data.cassandra.core.cql.Ordering;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
+import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.time.Instant;
 
+@Table
 public class DBArticle {
 
+    @Column
     private int id;
+    @PrimaryKeyColumn(name ="topic", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     private String topic;
+    @Column
     private String title;
+    @Column
     private String description;
+    @Column
     private String url;
+    @PrimaryKeyColumn(name = "published_at", ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     private Instant published_at;
+    @Column
     private String source;
+    @Column
     private String source_url;
 
     public DBArticle(int id, String topic, String title, String description, String url, Instant published_at, String source, String source_url) {
@@ -87,4 +102,5 @@ public class DBArticle {
     public void setSource_url(String source_url) {
         this.source_url = source_url;
     }
+
 }

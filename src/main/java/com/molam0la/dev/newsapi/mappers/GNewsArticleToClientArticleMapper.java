@@ -1,8 +1,8 @@
-package com.molam0la.dev.newsapi.Mappers;
+package com.molam0la.dev.newsapi.mappers;
 
-import com.molam0la.dev.newsapi.ArticleProperties.ArticleInput;
-import com.molam0la.dev.newsapi.Articles.ClientArticle;
-import com.molam0la.dev.newsapi.Articles.ClientArticleInput;
+import com.molam0la.dev.newsapi.article_props.ArticleInput;
+import com.molam0la.dev.newsapi.articles.ClientArticle;
+import com.molam0la.dev.newsapi.articles.ClientArticleInput;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class GnewsArticleToClientArticleMapper implements Function<ArticleInput, ClientArticleInput> {
+public class GNewsArticleToClientArticleMapper implements Function<ArticleInput, ClientArticleInput> {
 
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 

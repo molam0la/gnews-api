@@ -1,4 +1,4 @@
-package com.molam0la.dev.newsapi.Config;
+package com.molam0la.dev.newsapi.app_config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

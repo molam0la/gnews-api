@@ -1,4 +1,4 @@
-package com.molam0la.dev.newsapi.Config;
+package com.molam0la.dev.newsapi.app_config;
 
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;

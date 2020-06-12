@@ -1,7 +1,7 @@
 package com.molam0la.dev.newsapi;
 
-import com.molam0la.dev.newsapi.Mappers.GnewsArticleToClientArticleMapper;
-import com.molam0la.dev.newsapi.Config.ConfigProps;
+import com.molam0la.dev.newsapi.mappers.GNewsArticleToClientArticleMapper;
+import com.molam0la.dev.newsapi.app_config.ConfigProps;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -28,7 +28,7 @@ class GNewsTest {
     @Mock
     private ConfigProps configProps;
     @Mock
-    private GnewsArticleToClientArticleMapper mapper;
+    private GNewsArticleToClientArticleMapper mapper;
 
     @BeforeAll
     static void setUp() throws IOException {

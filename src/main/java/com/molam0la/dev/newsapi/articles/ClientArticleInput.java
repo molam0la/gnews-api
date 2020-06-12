@@ -1,4 +1,4 @@
-package com.molam0la.dev.newsapi.Articles;
+package com.molam0la.dev.newsapi.articles;
 
 import java.util.List;
 

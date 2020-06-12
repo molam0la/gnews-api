@@ -1,4 +1,4 @@
-package com.molam0la.dev.newsapi.ArticleProperties;
+package com.molam0la.dev.newsapi.article_props;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
