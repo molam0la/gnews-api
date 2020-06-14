@@ -3,9 +3,7 @@
 
 name: Java CI with Gradle
 
-on:
-  push:
-    branches: [ master ]
+on: [ push ]
   pull_request:
     branches: [ master ]
 
