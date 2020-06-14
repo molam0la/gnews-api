@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 @Service
 public class DBArticleService {
 
@@ -18,7 +20,7 @@ public class DBArticleService {
         this.dbArticleRepository = dbArticleRepository;
     }
 
-//    @PostConstruct
+    @PostConstruct
     public void saveTopicArticlesInDB() {
         gNewsArticleService.getTopicArticlesForCaching()
                 .subscribe(dbArticles -> dbArticles.forEach(dbArticleRepository::save),
