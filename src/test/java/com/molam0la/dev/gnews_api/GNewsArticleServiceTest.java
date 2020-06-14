@@ -1,7 +1,9 @@
 package com.molam0la.dev.gnews_api;
 
+import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToClientArticleMapper;
 import com.molam0la.dev.gnews_api.app_config.ConfigProps;
+import com.molam0la.dev.gnews_api.mappers.GNewsArticleToDBArticleMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -19,6 +21,7 @@ import reactor.test.StepVerifier;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -26,8 +29,9 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class GNewsArticleServiceTest {
 
-    private GNewsArticleService GNewsArticleService;
-    private GNewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
+    private GNewsArticleService gNewsArticleService;
+    private GNewsArticleToClientArticleMapper gNewsArticleToClientArticleMapper;
+    private GNewsArticleToDBArticleMapper gNewsArticleToDBArticleMapper;
     private static MockWebServer mockWebServer;
     private static MockResponse mockResponse;
     private String ARTICLE_STUB;
@@ -51,8 +55,9 @@ class GNewsArticleServiceTest {
         given(configProps.getBaseUrl()).willReturn(baseUrl);
 
         gNews = new GNews(configProps);
-        gnewsArticleToClientArticleMapper = new GNewsArticleToClientArticleMapper();
-        GNewsArticleService = new GNewsArticleService(gNews, configProps, gnewsArticleToClientArticleMapper);
+        gNewsArticleToClientArticleMapper = new GNewsArticleToClientArticleMapper();
+        gNewsArticleToDBArticleMapper = new GNewsArticleToDBArticleMapper(configProps);
+        gNewsArticleService = new GNewsArticleService(gNews, configProps, gNewsArticleToClientArticleMapper, gNewsArticleToDBArticleMapper);
         given(configProps.getLang()).willReturn("en");
 
         //set stub article body
@@ -71,8 +76,8 @@ class GNewsArticleServiceTest {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(GNewsArticleService.getArticlesByTopic())
-                .expectNextMatches(articleInputModel -> articleInputModel.getArticleCount() == 10)
+        StepVerifier.create(gNewsArticleService.getArticlesByTopic())
+                .expectNextMatches(articleInput -> articleInput.getArticleCount() == 10)
                 .verifyComplete();
     }
 
@@ -81,10 +86,9 @@ class GNewsArticleServiceTest {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(GNewsArticleService.getArticlesBySearchWord())
-                .expectNextMatches(articleInputModel -> articleInputModel.getTimestamp() == 1585339920)
+        StepVerifier.create(gNewsArticleService.getArticlesBySearchWord())
+                .expectNextMatches(articleInput -> articleInput.getTimestamp() == 1585339920)
                 .verifyComplete();
-
     }
 
     @Test
@@ -92,8 +96,8 @@ class GNewsArticleServiceTest {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        assertTrue(GNewsArticleService
-                .createListOfArticles(GNewsArticleService.getArticlesBySearchWord())
+        assertTrue(gNewsArticleService
+                .createListOfArticles(gNewsArticleService.getArticlesBySearchWord())
                 .block()
                 .get(0)
                 .getSourceName()
@@ -101,11 +105,32 @@ class GNewsArticleServiceTest {
     }
 
     @Test
+    void getTopicArticlesForCaching_ReturnsAMonoListOfDBArticles() {
+        mockResponse.setResponseCode(200);
+        mockWebServer.enqueue(mockResponse);
+
+        StepVerifier.create(gNewsArticleService.getTopicArticlesForCaching())
+                .expectNextMatches(dbArticles -> dbArticles.stream().findFirst().get().getTitle().equals("Italy’s Slow Progress in Fighting Coronavirus Is a Warning to West"))
+                .verifyComplete();
+    }
+
+    @Test
+    void getTopicArticlesForCaching_UsesTopicFromConfigProps() {
+        mockResponse.setResponseCode(200);
+        mockWebServer.enqueue(mockResponse);
+        given(configProps.getTopic()).willReturn("testTopic");
+
+        StepVerifier.create(gNewsArticleService.getTopicArticlesForCaching())
+                .expectNextMatches(dbArticles -> dbArticles.stream().findFirst().get().getTopic().equals("testTopic"))
+                .verifyComplete();
+    }
+
+    @Test
     void getArticlesByTopic_returns4xxError() {
         mockResponse.setResponseCode(404);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(GNewsArticleService.createListOfArticles(GNewsArticleService.getArticlesByTopic()))
+        StepVerifier.create(gNewsArticleService.createListOfArticles(gNewsArticleService.getArticlesByTopic()))
                 .expectError(NotFound.class).verify();
     }
 
@@ -114,19 +139,18 @@ class GNewsArticleServiceTest {
         mockResponse.setResponseCode(500);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(GNewsArticleService.getArticlesByTopic())
+        StepVerifier.create(gNewsArticleService.getArticlesByTopic())
                 .expectError(InternalServerError.class).verify();
     }
 
     @Test
-    void getArticlesByTopic_throwsTooManyRequestsException() {
+    void getArticlesByTopic_throwsTooManyRequestsExceptionWhenRequestLimitIsReached() {
         mockResponse.setResponseCode(429);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(GNewsArticleService.getArticlesByTopic())
+        StepVerifier.create(gNewsArticleService.getArticlesByTopic())
                 .expectError(TooManyRequests.class).verify();
     }
-
 
 
     @AfterAll

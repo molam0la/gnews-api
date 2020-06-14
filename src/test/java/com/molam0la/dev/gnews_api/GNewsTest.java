@@ -2,6 +2,7 @@ package com.molam0la.dev.gnews_api;
 
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToClientArticleMapper;
 import com.molam0la.dev.gnews_api.app_config.ConfigProps;
+import com.molam0la.dev.gnews_api.mappers.GNewsArticleToDBArticleMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -28,7 +29,9 @@ class GNewsTest {
     @Mock
     private ConfigProps configProps;
     @Mock
-    private GNewsArticleToClientArticleMapper mapper;
+    private GNewsArticleToClientArticleMapper gNewsArticleToClientArticleMapper;
+    @Mock
+    GNewsArticleToDBArticleMapper gNewsArticleToDBArticleMapper;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -40,7 +43,7 @@ class GNewsTest {
     void initialise() {
         String baseUrl = mockWebServer.url("/").toString();
         gNews = new GNews(configProps);
-        GNewsArticleService = new GNewsArticleService(gNews, configProps, mapper);
+        GNewsArticleService = new GNewsArticleService(gNews, configProps, gNewsArticleToClientArticleMapper, gNewsArticleToDBArticleMapper);
 
         given(configProps.getBaseUrl()).willReturn(baseUrl);
         given(configProps.getLang()).willReturn("en");

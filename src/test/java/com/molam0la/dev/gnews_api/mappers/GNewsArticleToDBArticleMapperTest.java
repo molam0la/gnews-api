@@ -4,6 +4,7 @@ import com.molam0la.dev.gnews_api.app_config.ConfigProps;
 import com.molam0la.dev.gnews_api.article_props.Article;
 import com.molam0la.dev.gnews_api.article_props.ArticleInput;
 import com.molam0la.dev.gnews_api.article_props.Source;
+import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ class GNewsArticleToDBArticleMapperTest {
 
     @BeforeEach
     public void setUp() {
-        mapper = new GNewsArticleToDBArticleMapper();
+        mapper = new GNewsArticleToDBArticleMapper(configProps);
 
         articlesList = new ArrayList<>();
         articlesList.add(new Article("title1", "description1", "url1", "image1", "2020-03-27 19:30:21 UTC", new Source("source1", "sourceUrl1")));
@@ -42,23 +43,29 @@ class GNewsArticleToDBArticleMapperTest {
     }
 
     @Test
-    public void applyReturnsAListOfDBArticles() {
-        assertFalse(mapper.apply(articleInput, configProps).isEmpty());
+    public void apply_ReturnsCorrectClass() {
+        assertThat(mapper.apply(articleInput).equals(DBArticle.class));
     }
 
     @Test
-    public void applyReturnsTopicValueFromConfigMap() {
-        assertEquals("testTopic", mapper.apply(articleInput, configProps).get(0).getTopic());
+    public void apply_ReturnsAListOfDBArticles() {
+        assertFalse(mapper.apply(articleInput).isEmpty());
     }
 
     @Test
-    public void returnedDBArticlesHaveIdsFromTheRange() {
-        assertThat((mapper.apply(articleInput, configProps).get(0).getId() >= 0));
-        assertThat((mapper.apply(articleInput, configProps).get(0).getId() <= 1000));
+    public void apply_ReturnsTopicValueFromConfigMap() {
+        assertEquals("testTopic", mapper.apply(articleInput).get(0).getTopic());
     }
 
     @Test
-    public void applyReturnsDbArticlesWithCorrectPublishedAtValueConvertedToISOFormat() {
-        assertEquals(ZonedDateTime.of(2020,3,27,19,30,21,0, ZoneOffset.UTC).toInstant(), mapper.apply(articleInput, configProps).get(0).getPublished_at());
+    public void apply_ReturnsDBArticlesWithIdsFromTheRange() {
+        assertThat((mapper.apply(articleInput).get(0).getId() >= 0));
+        assertThat((mapper.apply(articleInput).get(0).getId() <= 1000));
+    }
+
+    @Test
+    public void apply_ReturnsDbArticlesWithCorrectPublishedAtValueConvertedToISOFormat() {
+        assertEquals(ZonedDateTime.of(2020,3,27,19,30,21,0, ZoneOffset.UTC).toInstant(),
+                mapper.apply(articleInput).get(0).getPublished_at());
     }
 }
