@@ -5,6 +5,8 @@ import com.molam0la.dev.gnews_api.cassandra.CassandraConfig;
 import com.molam0la.dev.gnews_api.cassandra.CassandraConnector;
 import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
 import com.molam0la.dev.gnews_api.cassandra.repository.DBArticleRepository;
+import com.molam0la.dev.gnews_api.services.DBArticleService;
+import com.molam0la.dev.gnews_api.services.GNewsArticleService;
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
@@ -82,11 +84,27 @@ public class DBArticleServiceTest {
     public void saveTopicArticlesInDB_willSaveConvertedDBArticlesInDB() {
         dbArticleService = new DBArticleService(gNewsArticleService, dbArticleRepository);
         given(gNewsArticleService.getTopicArticlesForCaching()).willReturn(generateMonoListOfDbArticles());
-        dbArticleService.saveTopicArticlesInDB();
+        dbArticleService.prepareDbOnStartup();
 
         assertEquals(2, cassandraTemplate.count(DBArticle.class));
         assertEquals("Test Title2", dbArticleRepository.findAllArticles().iterator().next().getTitle());
         assertEquals(1, dbArticleRepository.findAll().get(1).getId());
+    }
+
+    @Test
+    public void revokeStaleArticles_DeletesAllRowsOlderThanTtl() {
+        dbArticleService = new DBArticleService(gNewsArticleService, dbArticleRepository);
+        given(gNewsArticleService.getTopicArticlesForCaching()).willReturn(generateMonoListOfDbArticles());
+        dbArticleService.prepareDbOnStartup();
+        assertEquals(0, cassandraTemplate.count(DBArticle.class));
+    }
+
+    @Test
+    public void revokeStaleArticles_ExceptionCaughtIfThereAreNoArticlesToRevoke() throws Exception {
+        dbArticleService = new DBArticleService(gNewsArticleService, dbArticleRepository);
+        given(gNewsArticleService.getTopicArticlesForCaching()).willReturn(Mono.empty());
+        dbArticleService.prepareDbOnStartup();
+//        assertThrows(Exception.class, () -> dbArticleService.revokeStaleArticles());
     }
 
     public Mono<List<DBArticle>> generateMonoListOfDbArticles() {
@@ -96,7 +114,7 @@ public class DBArticleServiceTest {
                 "Test Title1",
                 "Description for Test Title",
                 "www.test.com",
-                ZonedDateTime.of(2020, 3, 27, 19, 30, 21, 0, ZoneOffset.UTC).toInstant(),
+                ZonedDateTime.of(2020, 6, 12, 19, 30, 21, 0, ZoneOffset.UTC).toInstant(),
                 "Test Source",
                 "www.test-source.com");
 
@@ -106,7 +124,7 @@ public class DBArticleServiceTest {
                 "Test Title2",
                 "Description for Test Title",
                 "www.test.com",
-                ZonedDateTime.of(2020, 3, 25, 19, 30, 21, 0, ZoneOffset.UTC).toInstant(),
+                ZonedDateTime.of(2020, 6, 13, 23, 30, 21, 0, ZoneOffset.UTC).toInstant(),
                 "Test Source",
                 "www.test-source.com");
 

@@ -1,5 +1,6 @@
-package com.molam0la.dev.gnews_api;
+package com.molam0la.dev.gnews_api.services;
 
+import com.molam0la.dev.gnews_api.GNews;
 import com.molam0la.dev.gnews_api.article_props.ArticleInput;
 import com.molam0la.dev.gnews_api.articles.ClientArticleInput;
 import com.molam0la.dev.gnews_api.articles.ClientArticle;

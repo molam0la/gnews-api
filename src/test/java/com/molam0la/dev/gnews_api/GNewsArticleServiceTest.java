@@ -1,9 +1,9 @@
 package com.molam0la.dev.gnews_api;
 
-import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToClientArticleMapper;
 import com.molam0la.dev.gnews_api.app_config.ConfigProps;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToDBArticleMapper;
+import com.molam0la.dev.gnews_api.services.GNewsArticleService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -21,7 +21,6 @@ import reactor.test.StepVerifier;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;

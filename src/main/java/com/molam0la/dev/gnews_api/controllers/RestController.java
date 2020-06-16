@@ -1,6 +1,6 @@
 package com.molam0la.dev.gnews_api.controllers;
 
-import com.molam0la.dev.gnews_api.GNewsArticleService;
+import com.molam0la.dev.gnews_api.services.GNewsArticleService;
 import com.molam0la.dev.gnews_api.articles.ClientArticleInput;
 import com.molam0la.dev.gnews_api.app_config.ConfigProps;
 import org.slf4j.Logger;

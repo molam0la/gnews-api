@@ -4,7 +4,7 @@ spring:
 gnews:
   baseurl: "https://gnews.io/api/v3/"
   apikey: '${GNEWS_APIKEY}'
-  topic: "technology"
+  topic: "world"
   keyword: "dog"
   lang: "en"
 
