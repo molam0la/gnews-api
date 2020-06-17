@@ -26,7 +26,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -70,7 +72,7 @@ public class DBArticleRepositoryTest {
     }
 
     @Test
-    public void insertAndRetrieveADBArticleFromTable() {
+    public void insert_AndRetrieveADBArticleFromTable() {
         final DBArticle article1 = new DBArticle(
                 1,
                 "topic",
@@ -87,7 +89,7 @@ public class DBArticleRepositoryTest {
     }
 
     @Test
-    public void deleteDBArticleRemovesRowFromTable() {
+    public void delete_DBArticleRemovesRowFromTable() {
         final DBArticle article1 = new DBArticle(
                 1,
                 "topic",
@@ -115,36 +117,23 @@ public class DBArticleRepositoryTest {
     }
 
     @Test
-    public void deleteAllDBArticlesRemovesAllRowsFromTable() {
-        final DBArticle article1 = new DBArticle(
-                1,
-                "topic",
-                "Test Title",
-                "Description for Test Title",
-                "www.test.com",
-                ZonedDateTime.of(2020, 3, 27, 19, 30, 21, 0, ZoneOffset.UTC).toInstant(),
-                "Test Source",
-                "www.test-source.com");
-
-        final DBArticle article2 = new DBArticle(
-                2,
-                "topic2",
-                "Test Title",
-                "Description for Test Title",
-                "www.test.com",
-                ZonedDateTime.of(2020, 3, 26, 19, 30, 21, 0, ZoneOffset.UTC).toInstant(),
-                "Test Source",
-                "www.test-source.com");
-
-        repository.insert(article1);
-        repository.insert(article2);
+    public void delete_AllDBArticlesRemovesAllRowsFromTable() {
+        repository.insert(generateListOfTestArticles().get(0));
+        repository.insert(generateListOfTestArticles().get(1));
         cassandraTemplate.truncate(DBArticle.class);
         assertEquals(0, cassandraTemplate.count(DBArticle.class));
     }
 
     @Test
-    public void findWorldArticlesRetrievesCorrectRowsFromTopicColumn() {
-        final DBArticle article1 = new DBArticle(
+    public void findAllArticlesByTopic_ReturnsCorrectArticles() {
+        repository.insert(generateListOfTestArticles().get(0));
+        repository.insert(generateListOfTestArticles().get(1));
+        String expectedTopic = generateListOfTestArticles().get(0).getTopic();
+        assertEquals(expectedTopic, repository.findAllArticlesByTopic(expectedTopic));
+    }
+
+    private List<DBArticle> generateListOfTestArticles() {
+        DBArticle article1 = new DBArticle(
                 1,
                 "world",
                 "Test Title1",
@@ -154,7 +143,7 @@ public class DBArticleRepositoryTest {
                 "Test Source",
                 "www.test-source.com");
 
-        final DBArticle article2 = new DBArticle(
+        DBArticle article2 = new DBArticle(
                 2,
                 "technology",
                 "Test Title2",
@@ -164,9 +153,7 @@ public class DBArticleRepositoryTest {
                 "Test Source",
                 "www.test-source.com");
 
-        repository.save(article1);
-        repository.save(article2);
-        assertEquals(article1.getTitle(), repository.findWorldArticles().iterator().next().getTitle());
+        return Arrays.asList(article1, article2);
     }
 
     @AfterEach

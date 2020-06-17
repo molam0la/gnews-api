@@ -1,9 +1,14 @@
-package com.molam0la.dev.gnews_api;
+package com.molam0la.dev.gnews_api.services;
 
-import com.molam0la.dev.gnews_api.mappers.GNewsArticleToClientArticleMapper;
+import com.molam0la.dev.gnews_api.GNews;
 import com.molam0la.dev.gnews_api.app_config.ConfigProps;
+import com.molam0la.dev.gnews_api.articles.ClientArticle;
+import com.molam0la.dev.gnews_api.articles.ClientArticleInput;
+import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
+import com.molam0la.dev.gnews_api.cassandra.repository.DBArticleRepository;
+import com.molam0la.dev.gnews_api.mappers.DBArticleToClientArticleMapper;
+import com.molam0la.dev.gnews_api.mappers.GNewsArticleToClientArticleMapper;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToDBArticleMapper;
-import com.molam0la.dev.gnews_api.services.GNewsArticleService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -13,17 +18,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError;
 import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound;
-import org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests;
 import reactor.test.StepVerifier;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError;
 
 @ExtendWith(MockitoExtension.class)
 class GNewsArticleServiceTest {
@@ -39,6 +50,12 @@ class GNewsArticleServiceTest {
     private GNews gNews;
     @Mock
     private ConfigProps configProps;
+    @Mock
+    private DBArticleToClientArticleMapper dbArticleToClientArticleMapper;
+    @Mock
+    private DBArticleRepository repository;
+
+    private ClientArticleInput clientArticleInput;
 
     @BeforeAll
     static void initialiseWebServer() throws IOException {
@@ -56,7 +73,8 @@ class GNewsArticleServiceTest {
         gNews = new GNews(configProps);
         gNewsArticleToClientArticleMapper = new GNewsArticleToClientArticleMapper();
         gNewsArticleToDBArticleMapper = new GNewsArticleToDBArticleMapper(configProps);
-        gNewsArticleService = new GNewsArticleService(gNews, configProps, gNewsArticleToClientArticleMapper, gNewsArticleToDBArticleMapper);
+        gNewsArticleService = new GNewsArticleService(gNews, configProps, gNewsArticleToClientArticleMapper,
+                gNewsArticleToDBArticleMapper, dbArticleToClientArticleMapper, repository);
         given(configProps.getLang()).willReturn("en");
 
         //set stub article body
@@ -67,7 +85,6 @@ class GNewsArticleServiceTest {
         mockResponse = new MockResponse();
         mockResponse.addHeader("Content-Type", "application/json; charset=utf-8");
         mockResponse.setBody(ARTICLE_STUB);
-
     }
 
     @Test
@@ -114,6 +131,40 @@ class GNewsArticleServiceTest {
     }
 
     @Test
+    void getArticlesByTopic_ReturnsCachedArticlesForChosenTopicOnErrorWhenFindAllArticlesFromDBIsSuccessful() {
+        mockResponse.setResponseCode(500);
+        mockWebServer.enqueue(mockResponse);
+
+        List<DBArticle> dbArticles = Arrays.asList(
+                new DBArticle(1, "dog", "Some dog", "Some description", "www.dog.com", ZonedDateTime.of(2020, 3, 27, 19, 30, 21, 0, ZoneOffset.UTC).toInstant(), "Some source", "www.source-url"),
+                new DBArticle(2, "cat", "Some cat", "Some description", "www.cat.com", ZonedDateTime.of(2020, 3, 22, 19, 30, 21, 0, ZoneOffset.UTC).toInstant(), "Some source", "www.source-url"));
+        List<ClientArticle> clientArticles = Collections.singletonList(new ClientArticle("Some dog", "Some description", "www.dog.com", null, Instant.now(), "Some source", "www.source-url"));
+
+        clientArticleInput = new ClientArticleInput(100, 1, clientArticles);
+
+        given(configProps.getTopic()).willReturn("testTopic");
+        given(repository.findAllArticlesByTopic("testTopic")).willReturn(dbArticles);
+        given(dbArticleToClientArticleMapper.apply(dbArticles)).willReturn(clientArticleInput);
+
+        StepVerifier.create(gNewsArticleService.getArticlesByTopic())
+                .expectNext(clientArticleInput)
+                .verifyComplete();
+    }
+
+    @Test
+    void getArticlesByTopic_ReturnsErrorWhenFindAllArticlesFromDBIsNotSuccessful() {
+        mockResponse.setResponseCode(500);
+        mockWebServer.enqueue(mockResponse);
+
+        given(configProps.getTopic()).willReturn("testTopic");
+        given(repository.findAllArticlesByTopic("testTopic")).willReturn(new ArrayList<>());
+
+        StepVerifier.create(gNewsArticleService.getArticlesByTopic())
+                .expectError(Exception.class)
+                .verify();
+    }
+
+    @Test
     void getTopicArticlesForCaching_UsesTopicFromConfigProps() {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
@@ -125,32 +176,22 @@ class GNewsArticleServiceTest {
     }
 
     @Test
-    void getArticlesByTopic_returns4xxError() {
+    void getArticlesBySearchWord_returns4xxError() {
         mockResponse.setResponseCode(404);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(gNewsArticleService.createListOfArticles(gNewsArticleService.getArticlesByTopic()))
+        StepVerifier.create(gNewsArticleService.createListOfArticles(gNewsArticleService.getArticlesBySearchWord()))
                 .expectError(NotFound.class).verify();
     }
 
     @Test
-    void getArticlesByTopic_returns5xxError() {
+    void getArticlesBySearchWord_returns5xxError() {
         mockResponse.setResponseCode(500);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(gNewsArticleService.getArticlesByTopic())
+        StepVerifier.create(gNewsArticleService.createListOfArticles(gNewsArticleService.getArticlesBySearchWord()))
                 .expectError(InternalServerError.class).verify();
     }
-
-    @Test
-    void getArticlesByTopic_throwsTooManyRequestsExceptionWhenRequestLimitIsReached() {
-        mockResponse.setResponseCode(429);
-        mockWebServer.enqueue(mockResponse);
-
-        StepVerifier.create(gNewsArticleService.getArticlesByTopic())
-                .expectError(TooManyRequests.class).verify();
-    }
-
 
     @AfterAll
     static void tearDown() throws IOException {

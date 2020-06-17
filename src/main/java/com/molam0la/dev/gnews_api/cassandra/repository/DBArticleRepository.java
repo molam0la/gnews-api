@@ -12,9 +12,7 @@ public interface DBArticleRepository extends CassandraRepository<DBArticle, Id> 
     @Query("SELECT * FROM gnews_api.dbarticle")
     Iterable<DBArticle> findAllArticles();
 
-    @Query("SELECT * FROM gnews_api.dbarticle WHERE topic='world' limit 10")
-    Iterable<DBArticle> findWorldArticles();
+    @Query("SELECT * FROM gnews_api.dbarticle WHERE topic=?0 limit 10")
+    Iterable <DBArticle> findAllArticlesByTopic(String topic);
 
-    @Query("SELECT * FROM gnews_api.dbarticle WHERE topic='technology' limit 10")
-    Iterable<DBArticle> findTechnologyArticles();
 }

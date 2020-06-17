@@ -1,12 +1,10 @@
-package com.molam0la.dev.gnews_api;
+package com.molam0la.dev.gnews_api.services;
 
 import com.datastax.driver.core.Session;
 import com.molam0la.dev.gnews_api.cassandra.CassandraConfig;
 import com.molam0la.dev.gnews_api.cassandra.CassandraConnector;
 import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
 import com.molam0la.dev.gnews_api.cassandra.repository.DBArticleRepository;
-import com.molam0la.dev.gnews_api.services.DBArticleService;
-import com.molam0la.dev.gnews_api.services.GNewsArticleService;
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
@@ -97,14 +95,6 @@ public class DBArticleServiceTest {
         given(gNewsArticleService.getTopicArticlesForCaching()).willReturn(generateMonoListOfDbArticles());
         dbArticleService.prepareDbOnStartup();
         assertEquals(0, cassandraTemplate.count(DBArticle.class));
-    }
-
-    @Test
-    public void revokeStaleArticles_ExceptionCaughtIfThereAreNoArticlesToRevoke() throws Exception {
-        dbArticleService = new DBArticleService(gNewsArticleService, dbArticleRepository);
-        given(gNewsArticleService.getTopicArticlesForCaching()).willReturn(Mono.empty());
-        dbArticleService.prepareDbOnStartup();
-//        assertThrows(Exception.class, () -> dbArticleService.revokeStaleArticles());
     }
 
     public Mono<List<DBArticle>> generateMonoListOfDbArticles() {

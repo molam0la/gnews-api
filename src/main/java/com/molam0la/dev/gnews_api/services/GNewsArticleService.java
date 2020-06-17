@@ -5,6 +5,8 @@ import com.molam0la.dev.gnews_api.article_props.ArticleInput;
 import com.molam0la.dev.gnews_api.articles.ClientArticleInput;
 import com.molam0la.dev.gnews_api.articles.ClientArticle;
 import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
+import com.molam0la.dev.gnews_api.cassandra.repository.DBArticleRepository;
+import com.molam0la.dev.gnews_api.mappers.DBArticleToClientArticleMapper;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToClientArticleMapper;
 import com.molam0la.dev.gnews_api.app_config.ConfigProps;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToDBArticleMapper;
@@ -18,21 +20,27 @@ import java.util.List;
 @Service
 public class GNewsArticleService {
 
-    private GNews gNews;
-    private ConfigProps configProps;
-    private GNewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
-    private GNewsArticleToDBArticleMapper gNewsArticleToDBArticleMapper;
+    private final GNews gNews;
+    private final ConfigProps configProps;
+    private final GNewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper;
+    private final GNewsArticleToDBArticleMapper gNewsArticleToDBArticleMapper;
+    private final DBArticleToClientArticleMapper dbArticleToClientArticleMapper;
+    private final DBArticleRepository repository;
 
     private static final Logger log = LoggerFactory.getLogger(GNewsArticleService.class);
 
     public GNewsArticleService(GNews gNews,
                                ConfigProps configProps,
                                GNewsArticleToClientArticleMapper gnewsArticleToClientArticleMapper,
-                               GNewsArticleToDBArticleMapper gNewsArticleToDBArticleMapper) {
+                               GNewsArticleToDBArticleMapper gNewsArticleToDBArticleMapper,
+                               DBArticleToClientArticleMapper dbArticleToClientArticleMapper,
+                               DBArticleRepository repository) {
         this.gNews = gNews;
         this.configProps = configProps;
         this.gnewsArticleToClientArticleMapper = gnewsArticleToClientArticleMapper;
         this.gNewsArticleToDBArticleMapper = gNewsArticleToDBArticleMapper;
+        this.dbArticleToClientArticleMapper = dbArticleToClientArticleMapper;
+        this.repository = repository;
     }
 
     public Mono<ClientArticleInput> getArticlesByTopic() {
@@ -42,11 +50,16 @@ public class GNewsArticleService {
                 .retrieve()
                 .bodyToMono(ArticleInput.class)
                 .map(gnewsArticleToClientArticleMapper)
-                .doOnError(error -> log.error(error.getMessage())).onErrorResume(error -> {
-                    if (error.getMessage().contains("429")) {
-                        log.error("Gnews request limit has been reached today.");
-                    }
-                    return Mono.error(error);
+                .onErrorResume(throwable -> {
+                    log.error("Unable to retrieve articles from GNews API", throwable);
+                    return Mono.fromCallable(() -> repository.findAllArticlesByTopic(configProps.getTopic()))
+                            .flatMap(dbArticles -> {
+                                if (dbArticles.iterator().hasNext()) {
+                                   return Mono.just(dbArticleToClientArticleMapper.apply(dbArticles));
+                                } else {
+                                    return Mono.<ClientArticleInput>error(new Exception("Unable to retrieve articles from cache"));
+                                }
+                            });
                 });
     }
 
