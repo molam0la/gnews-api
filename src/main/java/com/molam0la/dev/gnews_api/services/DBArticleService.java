@@ -26,20 +26,20 @@ public class DBArticleService {
 
     @PostConstruct
     public void prepareDbOnStartup() {
-        gNewsArticleService.getTopicArticlesForCaching()
-                .subscribe(
-                        dbArticles -> {
-                            log.info("Caching articles on startup...");
-                            dbArticles.forEach(dbArticleRepository::save);
-                        },
-                        error -> log.error("Error during saving articles for caching", error)
-                );
+            gNewsArticleService.getTopicArticlesForUpfrontCaching()
+                    .subscribe(
+                            dbArticles -> {
+                                log.info("Caching articles on startup...");
+                                dbArticles.forEach(dbArticleRepository::save);
+                            },
+                            error -> log.error("Error during saving articles for caching", error)
+                    );
 
-        log.info("Removing stale articles...");
-        dbArticleRepository.findAll().stream()
-                .filter(dbArticle -> isStale(dbArticle.getPublished_at()))
-                .forEach(dbArticleRepository::delete);
-    }
+            log.info("Removing stale articles...");
+            dbArticleRepository.findAll().stream()
+                    .filter(dbArticle -> isStale(dbArticle.getPublished_at()))
+                    .forEach(dbArticleRepository::delete);
+        }
 
     private boolean isStale(Instant timestamp) {
         Duration hoursSinceTimestamp = Duration.ofHours(Duration.between(timestamp, Instant.now()).toHours());

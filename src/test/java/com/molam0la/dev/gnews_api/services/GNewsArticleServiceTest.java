@@ -125,7 +125,7 @@ class GNewsArticleServiceTest {
         mockResponse.setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
 
-        StepVerifier.create(gNewsArticleService.getTopicArticlesForCaching())
+        StepVerifier.create(gNewsArticleService.getTopicArticlesForUpfrontCaching())
                 .expectNextMatches(dbArticles -> dbArticles.stream().findFirst().get().getTitle().equals("Italy’s Slow Progress in Fighting Coronavirus Is a Warning to West"))
                 .verifyComplete();
     }
@@ -170,7 +170,7 @@ class GNewsArticleServiceTest {
         mockWebServer.enqueue(mockResponse);
         given(configProps.getTopic()).willReturn("testTopic");
 
-        StepVerifier.create(gNewsArticleService.getTopicArticlesForCaching())
+        StepVerifier.create(gNewsArticleService.getTopicArticlesForUpfrontCaching())
                 .expectNextMatches(dbArticles -> dbArticles.stream().findFirst().get().getTopic().equals("testTopic"))
                 .verifyComplete();
     }

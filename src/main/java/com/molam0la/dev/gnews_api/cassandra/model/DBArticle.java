@@ -15,7 +15,7 @@ public class DBArticle {
     private int id;
     @PrimaryKeyColumn(name ="topic", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     private String topic;
-    @Column
+    @PrimaryKeyColumn(name ="title", ordinal = 2, type = PrimaryKeyType.PARTITIONED)
     private String title;
     @Column
     private String description;

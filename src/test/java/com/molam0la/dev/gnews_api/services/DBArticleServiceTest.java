@@ -81,7 +81,7 @@ public class DBArticleServiceTest {
     @Test
     public void saveTopicArticlesInDB_willSaveConvertedDBArticlesInDB() {
         dbArticleService = new DBArticleService(gNewsArticleService, dbArticleRepository);
-        given(gNewsArticleService.getTopicArticlesForCaching()).willReturn(generateMonoListOfDbArticles());
+        given(gNewsArticleService.getTopicArticlesForUpfrontCaching()).willReturn(generateMonoListOfDbArticles());
         dbArticleService.prepareDbOnStartup();
 
         assertEquals(2, cassandraTemplate.count(DBArticle.class));
@@ -92,7 +92,7 @@ public class DBArticleServiceTest {
     @Test
     public void revokeStaleArticles_DeletesAllRowsOlderThanTtl() {
         dbArticleService = new DBArticleService(gNewsArticleService, dbArticleRepository);
-        given(gNewsArticleService.getTopicArticlesForCaching()).willReturn(generateMonoListOfDbArticles());
+        given(gNewsArticleService.getTopicArticlesForUpfrontCaching()).willReturn(generateMonoListOfDbArticles());
         dbArticleService.prepareDbOnStartup();
         assertEquals(0, cassandraTemplate.count(DBArticle.class));
     }

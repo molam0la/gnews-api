@@ -1,14 +1,14 @@
 package com.molam0la.dev.gnews_api.services;
 
 import com.molam0la.dev.gnews_api.GNews;
+import com.molam0la.dev.gnews_api.app_config.ConfigProps;
 import com.molam0la.dev.gnews_api.article_props.ArticleInput;
-import com.molam0la.dev.gnews_api.articles.ClientArticleInput;
 import com.molam0la.dev.gnews_api.articles.ClientArticle;
+import com.molam0la.dev.gnews_api.articles.ClientArticleInput;
 import com.molam0la.dev.gnews_api.cassandra.model.DBArticle;
 import com.molam0la.dev.gnews_api.cassandra.repository.DBArticleRepository;
 import com.molam0la.dev.gnews_api.mappers.DBArticleToClientArticleMapper;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToClientArticleMapper;
-import com.molam0la.dev.gnews_api.app_config.ConfigProps;
 import com.molam0la.dev.gnews_api.mappers.GNewsArticleToDBArticleMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +49,17 @@ public class GNewsArticleService {
                 .uri(createTopicUrl())
                 .retrieve()
                 .bodyToMono(ArticleInput.class)
+                .doOnNext(articleInput -> {
+                    log.info("Caching articles during GNews api call");
+                    repository.saveAll(gNewsArticleToDBArticleMapper.apply(articleInput));
+                })
                 .map(gnewsArticleToClientArticleMapper)
                 .onErrorResume(throwable -> {
-                    log.error("Unable to retrieve articles from GNews API", throwable);
+                    log.error("Unable to retrieve articles from GNews api", throwable);
                     return Mono.fromCallable(() -> repository.findAllArticlesByTopic(configProps.getTopic()))
                             .flatMap(dbArticles -> {
                                 if (dbArticles.iterator().hasNext()) {
-                                   return Mono.just(dbArticleToClientArticleMapper.apply(dbArticles));
+                                    return Mono.just(dbArticleToClientArticleMapper.apply(dbArticles));
                                 } else {
                                     return Mono.<ClientArticleInput>error(new Exception("Unable to retrieve articles from cache"));
                                 }
@@ -63,7 +67,7 @@ public class GNewsArticleService {
                 });
     }
 
-    public Mono<List<DBArticle>> getTopicArticlesForCaching() {
+    public Mono<List<DBArticle>> getTopicArticlesForUpfrontCaching() {
         return gNews.createWebClient()
                 .get()
                 .uri(createTopicUrl())

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class AppHealth implements HealthIndicator {
 
     @Override
-    public org.springframework.boot.actuate.health.Health health() {
+    public Health health() {
 
         //check if app has available memory
         boolean invalid = Runtime.getRuntime().maxMemory() < (100 * 1024 * 1024);
